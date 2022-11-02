@@ -15,21 +15,36 @@ exports.createPost=async (req, res) => {
 
 exports.updatePost=async (req, res) => {
     try {
+      var isPostFound=true
       const post = await Post.findById(req.params.id);
+      if (!post) {
+        res.status(403).json("post not found");
+        isPostFound = false
+      }
       if (post.userId === req.user.id) {
         await post.updateOne({ $set: req.body });
         res.status(200).json("the post has been updated");
       } else {
-        res.status(403).json("you can update only your post");
+       
+          res.status(403).json("you can update only your post");
+      
       }
     } catch (err) {
+      if (isPostFound) {
       res.status(500).json(err);
+    }
+
     }
   }
 
 exports.deletePost=async (req, res) => {
     try {
+      var isPostFound=true
       const post = await Post.findById(req.params.id);
+      if (!post) {
+        res.status(403).json("post not found");
+        isPostFound = false
+      }
       if (post.userId === req.user.id || req.user.isAdmin) {
         await post.deleteOne();
         res.status(200).json("the post has been deleted");
@@ -37,13 +52,20 @@ exports.deletePost=async (req, res) => {
         res.status(403).json("you can delete only your post");
       }
     } catch (err) {
-      res.status(500).json(err);
+      if (isPostFound) {
+        res.status(500).json(err);
+      }
     }
   }
 
 exports.likeAndUnlike=async (req, res) => {
     try {
+      var isPostFound=true
       const post = await Post.findById(req.params.id);
+      if (!post) {
+        res.status(403).json("post not found");
+        isPostFound = false
+      }
       if (!post.likes.includes(req.user.id)) {
         await post.updateOne({ $push: { likes: req.user.id } });
         res.status(200).json("The post has been liked");
@@ -52,7 +74,9 @@ exports.likeAndUnlike=async (req, res) => {
         res.status(200).json("like removed");
       }
     } catch (err) {
-      res.status(500).json(err);
+      if (isPostFound) {
+        res.status(500).json(err);
+      }
     }
   }
 

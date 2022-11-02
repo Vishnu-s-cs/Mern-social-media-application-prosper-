@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {verify,verifyTokenAndAuthorization,verifyTokenAndAdmin} = require('../verifyToken')
+const {verify,verifyTokenAndAuthorization,verifyTokenAndAdmin} = require('../middlewares/verifyToken')
 const {updateUser, blockUser, unblock, getUser, follow, unfollow, deleteUser, getAllUsers} = require('../controllers/userController')
 
 //update user
