@@ -82,10 +82,18 @@ exports.likeAndUnlike=async (req, res) => {
 
 exports.getAPost=async (req, res) => {
     try {
+      var isPostFound=true
       const post = await Post.findById(req.params.id);
+      if (!post) {
+        res.status(403).json("post not found");
+        isPostFound = false
+      }else{
       res.status(200).json(post);
-    } catch (err) {
+    }
+    } catch (err) { 
+      if(isPostFound) {
       res.status(500).json(err);
+    }
     }
   }
 
