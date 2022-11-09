@@ -7,7 +7,8 @@ const morgan = require("morgan");
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
-
+const cookieParser = require('cookie-parser')
+const cors = require('cors')
 dotenv.config();
 
 mongoose.connect(
@@ -19,6 +20,17 @@ mongoose.connect(
 );
 
 //middleware
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", true);
+  next();
+});
+app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
+app.use(cookieParser());
 app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));

@@ -106,7 +106,7 @@ exports.timeline=async (req, res) => {
           return Post.find({ userId: friendId });
         })
       );
-      res.json(userPosts.concat(...friendPosts))
+      res.status(200).json(userPosts.concat(...friendPosts))
     } catch (err) {
       res.status(500).json(err);
     }
@@ -134,6 +134,16 @@ exports.addComment=async (req, res) => {
         await post.updateOne({ $pull: { comments: {_id:req.query.comment}} });
         res.status(200).json("comment removed");
       
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
+
+  exports.userPosts=async (req, res) => {
+    try {
+      // const user = await User.findOne({ username: req.params.username });
+      const posts = await Post.find({ userId: req.params.id });
+      res.status(200).json(posts);
     } catch (err) {
       res.status(500).json(err);
     }

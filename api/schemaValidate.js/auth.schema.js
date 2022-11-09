@@ -1,10 +1,17 @@
 const Joi=require('joi')
 
-createUserSchema = Joi.object().keys({ 
-    username: Joi.string().required ,
+const schemas ={
+createUser: Joi.object().keys({ 
+    username: Joi.string().required() ,
     email: Joi.string().required().email(), 
-    password: Joi.number().required() 
-  }); 
+    password: Joi.string().required() 
+  }),
+  userLogin: Joi.object().keys({ 
+    email: Joi.string().required().email(), 
+    password: Joi.string().required() 
+  }),
+
+}; 
 
 
- 
+  module.exports = schemas;

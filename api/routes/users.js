@@ -3,7 +3,7 @@ const {verify,verifyTokenAndAuthorization,verifyTokenAndAdmin} = require('../mid
 const {updateUser, blockUser, unblock, getUser, follow, unfollow, deleteUser, getAllUsers} = require('../controllers/userController')
 
 //update user
-router.put("/:id",verifyTokenAndAuthorization,updateUser);
+router.put("/:id",verify,updateUser);
 
 //block user
 router.put("/block/:id",verifyTokenAndAdmin,blockUser);

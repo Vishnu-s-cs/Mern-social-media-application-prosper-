@@ -10,7 +10,7 @@ exports.register= async (req, res) => {
       if (req.body.username && req.body.email && req.body.password) {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
-        
+  
         //create new user
         const newUser = new User({
           username: req.body.username,
@@ -20,8 +20,8 @@ exports.register= async (req, res) => {
   
         //save user and respond
         await newUser.save().then((user)=>{
-  
-          res.status(200).json(user);
+          const { password, updatedAt, ...other } = user._doc;
+          res.status(200).json(other);
         }).catch((err)=>{res.status(400).json({"msg":"user already exist",err})});
         
       } else {
@@ -52,7 +52,10 @@ exports.userLogin=async (req, res) => {
               process.env.SECRET,
               { expiresIn: "5d" }
             );
-          res.status(200).json({user,accessToken})
+          const {password,updatedAt,blocked,email,createdAt, ...other } = user._doc;
+          res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+          }).status(200).json({other,accessToken})
         
         }
         }
@@ -83,7 +86,12 @@ exports.adminLogin=async (req, res) => {
               process.env.SECRET,
               { expiresIn: "5d" }
             );
-          res.status(200).json({user,accessToken})
+          const {password,updatedAt,profilePicture,coverPicture,followers,followings,blocked,email,createdAt, ...other } = user._doc;
+          console.log('login success');
+          
+          res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+          }).status(200).json({other,accessToken})
         
         }
         }

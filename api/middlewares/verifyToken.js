@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
 const User=require('../models/User')
 function verify(req, res, next) {
-  const authHeader = req.headers.token;
+  // const authHeader = req.headers.token;
+  const authHeader = req.cookies.accessToken;
+
   if (authHeader) {
-    const token = authHeader.split(" ")[1];
-   
+    const token = authHeader;
     jwt.verify(token, process.env.SECRET, (err, user) => {
       if (err) res.status(404).json("Token is not valid!")&&next([err]);
       req.user = user;
@@ -27,9 +28,7 @@ const verifyTokenAndAdmin=(req,res,next)=>{
 
 const verifyTokenAndAuthorization=(req,res,next)=>{
   verify(req,res,async()=>{
-    const user = await User.findOne({
-      email: req.user.email
-    });
+    const user = await User.findById(req.user.id);
    
       if(!user.blocked&&req.params.id===req.user.id|| req.user.isAdmin){
           next()
