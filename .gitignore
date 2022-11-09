@@ -1,6 +1,6 @@
 ./admin/node_modules
 ./admin/.env
-./client/node_modules
-./client/.env
+./user/node_modules
+./user/.env
 ./api/node_modules
 ./api/.env
