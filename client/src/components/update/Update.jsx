@@ -7,6 +7,7 @@ import FormInput from "../../components/formInput/FormInput";
 import axios from 'axios'
 // import {useNavigate,Link} from 'react-router-dom'
 import Swal from 'sweetalert2'
+import { useQueryClient} from "@tanstack/react-query";
 const Update = ({ setOpenUpdate, user }) => {
   // const navigate = useNavigate()
   const [values, setValues] = useState({
@@ -79,6 +80,7 @@ const [error, setError] = useState(false);
       required:true
     },
   ];
+  const queryClient = useQueryClient();
   const {confirmPassword,...others} = values
  let details=others
   const handleSubmit = async(e) => {
@@ -87,6 +89,7 @@ const [error, setError] = useState(false);
       await axios.put(`/users/${user._id}`,details).then((response) => {
         console.log('update success',response);
         setOpenUpdate(false)
+        queryClient.invalidateQueries(["user"]);
     }).catch((err)=>{
      err.response.data.error?setError(err.response.data.error):setError(err.response.data.msg)
       
@@ -137,7 +140,6 @@ const [error, setError] = useState(false);
   //   setTexts((prev) => ({ ...prev, [e.target.name]: [e.target.value] }));
   // };
 
-  // const queryClient = useQueryClient();
 
   // const mutation = useMutation(
   //   (user) => {

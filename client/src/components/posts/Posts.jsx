@@ -2,14 +2,19 @@ import Post from "../post/Post";
 import "./posts.scss";
 import {useQuery } from '@tanstack/react-query'
 import { makeRequest } from "../../axios";
+import { useState } from "react";
 const Posts = ({userId}) => {
-
+  const [err, setErr] = useState(false)
   const { isLoading, error, data } = useQuery(["posts"], () =>
   makeRequest.get(userId ?  `posts/profile/${userId}` : "posts/timeline/all").then((res) => {
+    
     return res.data;
+  }).catch((e)=>{
+    localStorage.removeItem("user");
+    setErr(e.response.data+"please re-login");
   })
 );
- 
+
 // console.log(posts);
   // console.log("data",data);
   //TEMPORARY
@@ -34,7 +39,7 @@ const Posts = ({userId}) => {
   // ];
 
   return <div className="posts">
-    {error?"no posts yet":
+    {error? <span onClick={()=>{window.location.replace('/login')}} style={{cursor:"pointer"}}>{err}</span> :
       (isLoading ? "loading...":data.map(post=>(
         <Post post={post} key={post._id}/>
       )))
