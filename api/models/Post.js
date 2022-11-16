@@ -20,6 +20,8 @@ const PostSchema = new mongoose.Schema(
     },
     comments:[{type: new mongoose.Schema({
       user: { type: ObjectId},  
+      name:{type:String},
+      profilePic:{type:String},
       comment: { type: String}},{timestamps: true})}],
   },
   { timestamps: true }

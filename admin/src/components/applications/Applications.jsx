@@ -1,77 +1,100 @@
 import "./datatable.scss";
 import { DataGrid } from "@mui/x-data-grid";
 // import { userColumns, userRows } from "../../datatablesource";
-import { Link } from "react-router-dom";
 import { useState } from "react";
-import { userUrl } from "../../constants/constant";
 import { useEffect } from "react";
 import axios from 'axios'
+import Swal from 'sweetalert2'
 
 const Applications = () => {
     const [status, setStatus] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
   const [data, setData] = useState([]);
   const userColumns = [ { field: "_id", headerName: "ID", width: 200 }, {
-    field: "name",
-    headerName: "Registered by",
+    field: "userId",
+    headerName: "User id",
     width: 150,
   }, {
-    field: "company_name",
-    headerName: "Company",
+    field: "desc",
+    headerName: "Description",
     width: 150,
   },
   {
-    field: "incubation_type",
-    headerName: "Type",
-    width: 150,
-  }, {
-    field: "state",
-    headerName: "Origin",
-    width: 150,
-  },
-  , {
-    field: "isApproved",
-    headerName: "Is approved",
-    width: 150,
-  },]
+    field: "createdAt",
+    headerName: "Created on",
+    width: 115,
+  }]
   useEffect(() => {
-     axios.get(`${userUrl}/api/admin/applications`).then((res)=>{
-      console.log(res);
-      console.log(res.data);
-      setData(res.data)
+     axios.get(`posts/`,{withCredentials:true}).then((res)=>{
+      // console.log(res);
+      // console.log(res.data);
+      const posts = res.data
+      setData(posts)
      })
     //  setData(['Id'])
   }, [status])
-  
- 
- 
-  function handleApprove(item){
-    axios.get(`${userUrl}/api/admin/approve/${item}`).then((response) => {
-      // console.log(response);
-        if (response.data) {
-            setStatus(new Date())
-        } else {
-            setErrorMessage('Something went wrong')
-        }
-    }).catch((err) => {
-        setErrorMessage(err)
 
-    })
-}
-function handleDeclined(item){
-  axios.get(`${userUrl}/api/admin/decline/${item}`).then((response) => {
-      if (response.data) {
-          console.log(response);
-          setStatus(new Date())
-      } else {
-          setErrorMessage('Something went wrong')
-      }
-  }).catch((err) => {
-      setErrorMessage(err)
-
+function handleDelete(item){
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      axios.delete(`posts/${item}`,{withCredentials:true}).then((response) => {
+        //  console.log(response);
+          if (response.data) {
+              // console.log(response);
+              setStatus(new Date())
+          } else {
+              setErrorMessage('Something went wrong')
+          }
+      }).catch((err) => {
+          setErrorMessage(err)
+    
+      })
+    }
   })
+  
 }
   const actionColumn = [
+    {
+      field: "image",
+      headerName: "Image",
+      width: 130,
+      renderCell: (params) => {
+        // console.log(params,"params apps");
+        return (
+         <img className="image" src={params.row.img} alt="no image" />
+        );
+      },
+    },
+    {
+      field: "likes",
+      headerName: "Likes",
+      width: 100,
+      renderCell: (params) => {
+        // console.log(params,"params apps");
+        return (
+         <span>{params.row.likes.length}</span>
+        );
+      },
+    },
+    {
+      field: "comments",
+      headerName: "Comments",
+      width: 100,
+      renderCell: (params) => {
+        // console.log(params.row.comments.length,"params apps");
+        return (
+         <span>{params.row.comments.length}</span>
+        );
+      },
+    },
     {
       field: "action",
       headerName: "Action",
@@ -81,37 +104,18 @@ function handleDeclined(item){
         return (
          
           <div className="cellAction">
-            
-       {params.row.isDeclined ? <div
-              className="deleteButton"
-            >
-              Declined
-            </div>:(params.row.isApproved ?
-              <div className="viewButton">Approved</div>
-            :
-            
-            <div className="viewButton" onClick={()=>{handleApprove(params.id)}}>Approve</div>
-            )
-            }
-               {params.row.isDeclined ? <div
-              
-            >
-             
-            </div>:(params.row.isApproved?
-              <div></div>
-            :
-            <div className="deleteButton" onClick={()=>{handleDeclined(params.id)}}>Decline</div>
-            )
-            }
+          
+            <div className="deleteButton" onClick={()=>{handleDelete(params.id)}}>Delete</div>
+           
           </div>
         );
       },
-    },
+    }
   ];
   return (
     <div className="datatable">
       <div className="datatableTitle">
-    Applications
+    Posts
         
       </div>
       <DataGrid
@@ -122,6 +126,7 @@ function handleDeclined(item){
         rowsPerPageOptions={[9]}
         checkboxSelection
         getRowId ={(row) => row._id}
+        rowHeight={65}
       />
     </div>
   );

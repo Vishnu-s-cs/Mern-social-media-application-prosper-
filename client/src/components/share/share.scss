@@ -16,6 +16,9 @@
         display: flex;
         align-items: center;
         gap: 20px;
+        .left{
+          display: flex;
+          align-items: center;
         img {
           width: 40px;
           height: 40px;
@@ -30,6 +33,18 @@
           background-color: transparent;
           width: 60%;
           color: themed("textColor");
+        }
+      }
+        .right {
+          flex: 1;
+          display: flex;
+          justify-content: flex-end;
+          .file {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 0px;
+          }
         }
       }
 
@@ -73,6 +88,7 @@
             cursor: pointer;
             background-color: #5271ff;
             border-radius: 3px;
+            min-width: 5rem;
           }
         }
       }

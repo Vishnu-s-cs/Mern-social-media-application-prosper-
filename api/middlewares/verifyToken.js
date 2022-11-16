@@ -6,10 +6,18 @@ function verify(req, res, next) {
 
   if (authHeader) {
     const token = authHeader;
-    jwt.verify(token, process.env.SECRET, (err, user) => {
+    jwt.verify(token, process.env.SECRET, async(err, user) => {
       if (err) res.status(404).json("Token is not valid!")&&next([err]);
-      req.user = user;
+      const userDetails = await User.findById(user.id);
+   
+      if (userDetails?.blocked) {
+        return res.status(401).json("You are blocked by admin!");
+      }
+      else{
+        
+        req.user = user;
       next();
+      }
     });
   } else {
     return res.status(401).json("You are not authenticated!");

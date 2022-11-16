@@ -13,7 +13,9 @@ const Share = () => {
   // const [file, setFile] = useState(null)
   const [desc, setDesc] = useState(null)
   const [img, setImg] = useState(null);
+  const [uploading, setUploading] = useState(false)
   const {currentUser} = useContext(AuthContext)
+  const queryClient = useQueryClient();
   const handleChange = (e) => {
     const value = e.target.value;
     setDesc(value);
@@ -37,7 +39,10 @@ const Share = () => {
            
            
             makeRequest.post('/posts',{desc:desc,img:url})
-          
+            queryClient.invalidateQueries(["posts"]);
+            setDesc("")
+            setImg(null)
+            setUploading(false)
             // setPost({desc:post,img:url})
             // console.log(post); 
           });
@@ -46,7 +51,7 @@ const Share = () => {
     });
   };
   const handleUpload = (e) => {
-    console.log("button clicked");
+    setUploading(true)
     e.preventDefault();
     upload([
       { file: img, label: "img" },
@@ -76,16 +81,35 @@ const Share = () => {
     <div className="share">
       <div className="container">
         <div className="top">
+        <div className="left">
+            <img src={currentUser.profilePicture} alt="" />
+            <input
+              type="text"
+              placeholder={`What's on your mind ${currentUser.username}?`}
+              onChange={handleChange}
+              value={desc}
+            />
+          </div>
+          <div className="right">
+            {img && (
+              <img className="file" alt="" src={URL.createObjectURL(img)} />
+            )}
+          </div>
+          {/* <div className="left">
+          
+          
+            
           <img
             src={currentUser.profilePicture}
             alt=""
           />
           <input type="text" name="desc" placeholder={`What's on your mind ${currentUser.username}?`} onChange={handleChange}/>
+          </div> */}
         </div>
         <hr />
         <div className="bottom">
           <div className="left">
-            <input type="file" name="img" id="file" style={{display:"none"}} onChange={e=>setImg(e.target.files[0])}/>
+            <input type="file" name="img" id="file" style={{display:"none"}} accept=".png, .jpeg, jpg" onChange={e=>setImg(e.target.files[0])}/>
             <label htmlFor="file">
               <div className="item">
                 <img src={Image} alt="" />
@@ -102,7 +126,7 @@ const Share = () => {
             </div> */}
           </div>
           <div className="right">
-            <button onClick={handleUpload}>Share</button>
+            <button onClick={handleUpload}>{uploading?"Uploading...":"Post"}</button>
           </div>
         </div>
       </div>

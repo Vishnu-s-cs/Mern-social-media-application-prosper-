@@ -1,13 +1,13 @@
 const router = require("express").Router();
-const { verify, verifyTokenAndAuthorization } = require("../middlewares/verifyToken");
-const { createPost, updatePost, deletePost, likeAndUnlike, getAPost, timeline, addComment, unComment, userPosts } = require("../controllers/postController");
+const { verify, verifyTokenAndAuthorization, verifyTokenAndAdmin } = require("../middlewares/verifyToken");
+const { createPost, updatePost, deletePost, likeAndUnlike, getAPost, timeline, addComment, unComment, userPosts, getAllComments, allPosts } = require("../controllers/postController");
 
 //create a post
 router.post("/",verify,createPost);
 
 //update a post
 
-router.put("/:id", verifyTokenAndAuthorization,updatePost);
+router.put("/:id", verify,updatePost);
 
 //delete a post
 
@@ -26,7 +26,6 @@ router.get("/:id", getAPost);
 router.get("/timeline/all",verify, timeline);
 
 //comment
-
 router.put("/:id/comment",verify, addComment);
 
 //uncomment
@@ -35,5 +34,9 @@ router.put("/:id/unComment",verify, unComment);
 
 //user's post 
 router.get("/profile/:id", verify,userPosts);
+
+//all posts
+router.get("/", verifyTokenAndAdmin,allPosts);
+
 
 module.exports = router;

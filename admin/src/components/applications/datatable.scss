@@ -1,7 +1,13 @@
 .datatable {
   height: 600px;
   padding: 20px;
-  
+  .image{
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+  }
   .datatableTitle{
     width: 100%;
     font-size: 24px;

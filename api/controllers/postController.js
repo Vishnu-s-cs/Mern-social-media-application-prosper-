@@ -114,10 +114,7 @@ exports.timeline=async (req, res) => {
 
 exports.addComment=async (req, res) => {
     try {
-      const comment ={
-        user:req.user.id,
-        comment:req.body.comment
-      }
+      const comment =req.body
       const post = await Post.findById(req.params.id);
       
         await post.updateOne({ $push: { comments: comment } });
@@ -143,6 +140,16 @@ exports.addComment=async (req, res) => {
     try {
       // const user = await User.findOne({ username: req.params.username });
       const posts = await Post.find({ userId: req.params.id });
+      res.status(200).json(posts);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
+
+  exports.allPosts=async (req, res) => {
+    try {
+      // const user = await User.findOne({ username: req.params.username });
+      const posts = await Post.find();
       res.status(200).json(posts);
     } catch (err) {
       res.status(500).json(err);

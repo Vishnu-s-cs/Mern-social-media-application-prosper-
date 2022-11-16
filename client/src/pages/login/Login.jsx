@@ -47,7 +47,8 @@ const Login = () => {
       await login(details)
       navigate('/')
     } catch (error) {
-      setErr(error.response.data.msg)
+      console.log(error);
+      setErr(error.response.data)
     }    
   };
 
@@ -68,7 +69,8 @@ const Login = () => {
             onChange={onChange}
           />
         ))}
-        {err&&err}
+        <div className="error"> {err&&err}</div>
+       
         <button>Login</button>
 
             

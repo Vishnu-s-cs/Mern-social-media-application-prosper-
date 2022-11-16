@@ -42,7 +42,7 @@ function App() {
               />
               
             </Route>
-            <Route path="applications">
+            <Route path="posts">
               <Route index element={<AppList />} />
               <Route path=":productId" element={<Single />} />
               <Route

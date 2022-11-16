@@ -7,8 +7,9 @@ const Posts = ({userId}) => {
   const [err, setErr] = useState(false)
   const { isLoading, error, data } = useQuery(["posts"], () =>
   makeRequest.get(userId ?  `posts/profile/${userId}` : "posts/timeline/all").then((res) => {
-    
-    return res.data;
+    const sortedPosts = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+
+    return sortedPosts;
   }).catch((e)=>{
     localStorage.removeItem("user");
     setErr(e.response.data+"please re-login");

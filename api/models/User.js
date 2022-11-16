@@ -26,7 +26,7 @@ const UserSchema = new mongoose.Schema(
     },
     coverPicture: {
       type: String,
-      default: "",
+      default: "https://images.unsplash.com/photo-1496449903678-68ddcb189a24?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
     },
     followers: {
       type: Array,
