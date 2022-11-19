@@ -55,7 +55,8 @@ const Datatable = () => {
         confirmButtonText: 'ok'
       })
    }
-   }) 
+   }).catch((e)=>{console.log(e); localStorage.removeItem("user");
+   setErr(e.response.data+" please re-login");})
 }
 function handleUnblock(userId){
   axios.put(`users/unblock/${userId}`,{withCredentials:true}).then(({data})=>{
@@ -78,7 +79,8 @@ function handleUnblock(userId){
       confirmButtonText: 'ok'
     })
  }
- }) 
+ }).catch((e)=>{localStorage.removeItem("user");
+ setErr(e.response.data+" please re-login");}) 
 }
   const actionColumn = [
     {

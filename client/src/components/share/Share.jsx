@@ -7,6 +7,7 @@ import storage from "../../firebase";
 import { AuthContext } from "../../context/authContext";
 import { makeRequest } from "../../axios";
 import {useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 // import { makeRequest } from "../../axios";
 const Share = () => {
 
@@ -15,6 +16,7 @@ const Share = () => {
   const [img, setImg] = useState(null);
   const [uploading, setUploading] = useState(false)
   const {currentUser} = useContext(AuthContext)
+  console.log(currentUser);
   const queryClient = useQueryClient();
   const handleChange = (e) => {
     const value = e.target.value;
@@ -50,12 +52,32 @@ const Share = () => {
       );
     });
   };
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleUpload(event)
+    }
+  }
   const handleUpload = (e) => {
-    setUploading(true)
-    e.preventDefault();
-    upload([
-      { file: img, label: "img" },
-    ]);
+    if (desc?.trim().length!==0&&desc!=null) { 
+      if (img==null) {
+        makeRequest.post('/posts',{desc:desc})
+              queryClient.invalidateQueries(["posts"]);
+              setDesc("")
+      }
+      else
+      {setUploading(true)
+      e.preventDefault();
+      upload([
+        { file: img, label: "img" },
+      ]);}
+    }
+    else{
+      axios.get('https://api.adviceslip.com/advice').then((res)=>{
+        setDesc(res.data.slip.advice)
+      })
+     
+    }
+    
   //  await makeRequest.post('/posts',post)
   };
   // const queryClient = useQueryClient();
@@ -70,13 +92,6 @@ const Share = () => {
   //     },
   //   }
   // );
-  const handleClick = ()=>{
-    // let imgUrl = "";
-    // if (file) imgUrl = await upload();
-    // mutation.mutate({ desc, img: imgUrl });
-    // setDesc("");
-    // setFile(null);
-  }
   return (
     <div className="share">
       <div className="container">
@@ -88,6 +103,7 @@ const Share = () => {
               placeholder={`What's on your mind ${currentUser.username}?`}
               onChange={handleChange}
               value={desc}
+              onKeyDown={handleKeyDown}
             />
           </div>
           <div className="right">

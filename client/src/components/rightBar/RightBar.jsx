@@ -1,39 +1,74 @@
-import "./rightBar.scss";
+import React, { useEffect } from 'react'
+import "./rightBar.scss"
+// import pic from "../../assets/tp-best-mens-hairstyles.jpg"
+import axios from 'axios'
+import { baseUrl, makeRequest } from '../../axios'
+import { useState } from 'react'
+import { useContext } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
+import { AuthContext } from '../../context/authContext'
 
-const RightBar = () => {
+
+function RightBar() {
+  const queryClient = useQueryClient();
+  const {currentUser} = useContext(AuthContext)
+  const [allUsers, setAllUsers] = useState([])
+  
+  useEffect(()=>{
+    const getAllUsers = (async()=>{
+      makeRequest.get(`users/`).then((users)=>{
+        console.log(users);
+        setAllUsers(users.data)
+      },[])
+    })
+    getAllUsers()
+  },[])
+
+  const { isLoading, error, data } = useQuery(["suggestions"], () =>
+    makeRequest.get(`users/`).then((res) => {
+    const users = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+
+    setAllUsers(users)  
+    return res.data;
+  })
+);
+
+
+  const follow =(userId)=>{
+    makeRequest.put(`users/${userId}/follow`,{ userId :currentUser._id})
+    queryClient.invalidateQueries(["user"]);
+    queryClient.invalidateQueries(["suggestions"]);
+    queryClient.invalidateQueries(["posts"]);
+
+
+  }
   return (
     <div className="rightBar">
       <div className="container">
-        <div className="item">
-          <span>Suggestions For You</span>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                alt=""
-              />
-              <span>Jane Doe</span>
+      <div className="item">
+          <span>New users</span>
+          {allUsers.map(user=>(
+          currentUser.username!=user.username &&  !user.followers.includes(currentUser._id) && <div className="user">
+            <div className="userInfo" key = {user._id} >
+              <Link
+              to={`/profile/${user._id}`}>
+              <img src={user.profilePicture} />
+              </Link>
+              <Link to={`/profile/${user._id}`} style={{textDecoration:"none"}}>
+              <span>{user.username}</span>
+              </Link>
             </div>
             <div className="buttons">
-              <button>follow</button>
-              <button>dismiss</button>
+           { !user.followers.includes(currentUser._id)?
+              <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 rounded' onClick={()=>follow(user._id)} >follow</button>:
+              <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-1 rounded' >dismiss</button>}
             </div>
           </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                alt=""
-              />
-              <span>Jane Doe</span>
-            </div>
-            <div className="buttons">
-              <button>follow</button>
-              <button>dismiss</button>
-            </div>
-          </div>
+          ))}
+
         </div>
-        <div className="item">
+        {/* <div className="item">
           <span>Latest Activities</span>
           <div className="user">
             <div className="userInfo">
@@ -196,7 +231,7 @@ const RightBar = () => {
               <span>Jane Doe</span>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

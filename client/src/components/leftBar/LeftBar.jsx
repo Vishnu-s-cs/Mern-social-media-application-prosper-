@@ -1,17 +1,4 @@
 import "./leftBar.scss";
-// import Friends from "../../assets/1.png";
-// import Groups from "../../assets/2.png";
-// import Market from "../../assets/3.png";
-// import Watch from "../../assets/4.png";
-// import Memories from "../../assets/5.png";
-// import Events from "../../assets/6.png";
-// import Gaming from "../../assets/7.png";
-// import Gallery from "../../assets/8.png";
-// import Videos from "../../assets/9.png";
-// import Messages from "../../assets/10.png";
-// import Tutorials from "../../assets/11.png";
-// import Courses from "../../assets/12.png";
-// import Fund from "../../assets/13.png";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
@@ -52,6 +39,7 @@ const LeftBar = () => {
     
   
   };
+  
   return (
     <div className="leftBar">
           <Link to="/" style={{ textDecoration: "none"}}>
@@ -60,7 +48,7 @@ const LeftBar = () => {
 
       <div className="container">
         <div className="menu">
-        <Link to="/" style={{ textDecoration: "none",color:"black",padding:"0",margin:"0" }}>
+        <Link to="/" style={{ textDecoration: "none",color:"black",padding:"0",margin:"0" }} replace>
           <div className="item">
           
             <HomeOutlinedIcon/>

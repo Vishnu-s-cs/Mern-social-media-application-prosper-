@@ -99,10 +99,21 @@
           span {
             font-size: 30px;
             font-weight: 500;
-            margin-top: 4rem;
+            margin-top: 2rem;
           }
 
-         
+          .item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: themed("textColorSoft");
+            height: 1rem;
+            width: 103%;
+            span {
+              font-size: 16px;
+              padding-bottom: .5rem;
+            }
+          }
           button {
             border: none;
             background-color: #5271ff;

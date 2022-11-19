@@ -11,19 +11,23 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
-import { useLocation } from "react-router-dom";
-import { useContext } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../../context/authContext";
 import Update from "../../components/update/Update";
 import { useState } from "react";
 
 const Profile = () => {
+  
   const [openUpdate, setOpenUpdate] = useState(false);
   const { currentUser } = useContext(AuthContext);
 
-  const userId = useLocation().pathname.split("/")[2]
+  const {id} = useParams()
+  const userId = id;
+
   const { isLoading, error, data } = useQuery(["user"], () =>
     makeRequest.get("/users/" + userId).then((res) => {
+      console.log(res.data);
       return res.data;
     })
   );
@@ -35,9 +39,11 @@ const Profile = () => {
   //       return res.data;
   //     })
   // );
-
+  
   const queryClient = useQueryClient();
+    
 
+  
   const mutation = useMutation(
     (following) => {
       if (following)
@@ -78,6 +84,7 @@ const Profile = () => {
                     <LanguageIcon />
                     <span>{data.email}</span>
                   </div>
+                  
                 </div>
                 {/* <a href="http://facebook.com">
                   <FacebookTwoToneIcon fontSize="large" />
@@ -114,6 +121,12 @@ const Profile = () => {
                       : "Follow"}
                   </button>
                 )} */}
+                <div className="item">
+                    
+                    <span>followers {data.followers.length}</span>&nbsp;&nbsp;
+                    <span>following {data.followings.length}</span>
+
+                  </div>
               </div>
               <div className="right">
                 <EmailOutlinedIcon />

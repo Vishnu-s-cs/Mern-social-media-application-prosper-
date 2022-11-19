@@ -4,14 +4,17 @@ import FormInput from "../../components/formInput/FormInput";
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { useQueryClient} from "@tanstack/react-query";
+import { useContext } from "react";
+import { AuthContext } from "../../context/authContext";
 const Update = ({ setOpenUpdate, user }) => {
+  const {currentUser,setCurrentUser} = useContext(AuthContext)
   const [values, setValues] = useState({
-    username: "",
-    email: "",
-    city:"",
-    desc:"",
-    password: "",
-    confirmPassword: "",
+    username: user.username,
+    email: user.email,
+    city: user.city,
+    desc: user.desc,
+    password: null, 
+    confirmPassword: null,
   });
 const [error, setError] = useState(false);
   const inputs = [
@@ -23,8 +26,7 @@ const [error, setError] = useState(false);
       errorMessage:
         "Username should be 3-16 characters and shouldn't include any special character!",
       label: "Username",
-      pattern: "^[A-Za-z0-9]{3,16}$",
-      required:true
+      pattern: "^[A-Za-z0-9]{3,16}$"
     },
     {
       id: 2,
@@ -61,8 +63,7 @@ const [error, setError] = useState(false);
       errorMessage:
         "Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!",
       label: "Password",
-      pattern: `^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$`,
-      required:true
+      pattern: `^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$`
     },
     {
       id: 6,
@@ -71,8 +72,7 @@ const [error, setError] = useState(false);
       placeholder: "Confirm Password",
       errorMessage: "Passwords don't match!",
       label: "Confirm Password",
-      pattern: values.password,
-      required:true
+      pattern: values.password
     },
   ];
   const queryClient = useQueryClient();
@@ -82,8 +82,10 @@ const [error, setError] = useState(false);
     e.preventDefault();
     try {
       await axios.put(`/users/${user._id}`,details).then((response) => {
-        console.log('update success',response);
+        console.log('before update',currentUser);
+        setCurrentUser({...currentUser,city:details.city,username:details.username,desc:details.desc})
         setOpenUpdate(false)
+        console.log("after update",currentUser);
         queryClient.invalidateQueries(["user"]);
     }).catch((err)=>{
       console.log(err,"hello");

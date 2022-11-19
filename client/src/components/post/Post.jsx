@@ -10,11 +10,14 @@ import { makeRequest } from "../../axios";
 import ReactTimeAgo from 'react-time-ago'
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../context/authContext";
+import Swal from 'sweetalert2'
 const Post = ({ post }) => {
   const {currentUser} = useContext(AuthContext);
   const [commentOpen, setCommentOpen] = useState(false);
   const [user, setUser] = useState({});
   const [menuOpen, setMenuOpen] = useState(false)
+  const [updateOpen, setUpdateOpen] = useState(false);
+  const [desc, setDesc] = useState(null)
   const [liked, setLiked] = useState(post.likes.includes(currentUser._id)?true:false)
   const queryClient = useQueryClient();
   useEffect(() => {
@@ -45,8 +48,40 @@ const Post = ({ post }) => {
   }
 
   const handleDelete = () => {
-    deleteMutation.mutate(post._id);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteMutation.mutate(post._id);
+      }
+    })
+   
   };
+  const handleUpdate = ()=>{
+    // e.preventDefault()
+    if (desc) {
+      makeRequest.put(`posts/${post._id}`,{desc}).then((res)=>{
+      setUpdateOpen(!updateOpen)
+      queryClient.invalidateQueries(["posts"]);
+      })
+    }else{
+      setDesc(null) 
+      setUpdateOpen(!updateOpen)
+
+    }
+  }
+  // const Input = () => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter') {
+        handleUpdate()
+      }
+    }
   return (
     <div className="post">
       <div className="container">
@@ -63,10 +98,18 @@ const Post = ({ post }) => {
               <span className="date"><ReactTimeAgo date={post.createdAt}locale="en-US"/></span>
             </div>
           </div>
-          { post.userId === currentUser._id&&<MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />}
+         
+          { post.userId === currentUser._id&&<MoreHorizIcon onClick={() => {setMenuOpen(!menuOpen)
+     updateOpen && setUpdateOpen(!updateOpen)
+    }} style={{cursor:"pointer"}}/>}
           {menuOpen && post.userId === currentUser._id && (
-            <button onClick={handleDelete}>delete</button>
-          )}
+           <> 
+           <button onClick={handleDelete}>Delete</button>
+            <button onClick={handleUpdate} style={{top:"4rem",backgroundColor:"blue"}}>Update</button>
+            </>
+          ) }
+          {updateOpen&&(<><input type="text" placeholder="update description" onChange={(e)=>setDesc(e.target.value)} onKeyDown={handleKeyDown}/></>)}
+         
         </div>
         <div className="content" onDoubleClick={handleLike}>
           <p>{post.desc}</p>

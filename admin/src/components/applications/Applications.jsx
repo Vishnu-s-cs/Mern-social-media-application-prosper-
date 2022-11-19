@@ -8,7 +8,7 @@ import Swal from 'sweetalert2'
 
 const Applications = () => {
     const [status, setStatus] = useState('')
-    const [errorMessage, setErrorMessage] = useState('')
+    const [err, setErr] = useState(false);
   const [data, setData] = useState([]);
   const userColumns = [ { field: "_id", headerName: "ID", width: 200 }, {
     field: "userId",
@@ -30,7 +30,11 @@ const Applications = () => {
       // console.log(res.data);
       const posts = res.data
       setData(posts)
-     })
+     }).catch((err) => {
+      localStorage.removeItem("user");
+        setErr(err.response.data)
+  
+    })
     //  setData(['Id'])
   }, [status])
 
@@ -51,10 +55,11 @@ function handleDelete(item){
               // console.log(response);
               setStatus(new Date())
           } else {
-              setErrorMessage('Something went wrong')
+              setErr('Something went wrong')
           }
       }).catch((err) => {
-          setErrorMessage(err)
+        localStorage.removeItem("user");
+          setErr(err.response.data)
     
       })
     }
@@ -114,6 +119,8 @@ function handleDelete(item){
   ];
   return (
     <div className="datatable">
+       {err && <div className="p-4 mb-4 text-sm text-center text-red-800 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert" 
+       onClick={()=>{window.location.replace('/login')}} style={{cursor:"pointer"}}> {err} click here to re-login</div>}
       <div className="datatableTitle">
     Posts
         

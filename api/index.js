@@ -9,6 +9,8 @@ const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
+const conversationRoute = require("./routes/conversations");
+const messageRoute = require("./routes/messages");
 dotenv.config();
 
 mongoose.connect(
@@ -27,7 +29,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*",
   })
 );
 app.use(cookieParser());
@@ -38,7 +40,8 @@ app.use(morgan("common"));
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
-
+app.use("/api/conversations", conversationRoute);
+app.use("/api/messages", messageRoute);
 app.listen(8800, () => {
   console.log("server is running");
 });

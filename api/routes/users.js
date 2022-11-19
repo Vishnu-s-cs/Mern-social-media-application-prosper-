@@ -15,7 +15,7 @@ router.put("/unblock/:id",verifyTokenAndAdmin,unblock);
 router.get("/:id",getUser);
 
 //get all users
-router.get("/",verifyTokenAndAdmin,getAllUsers);
+router.get("/",verify,getAllUsers);
 
 //follow a user
 router.put("/:id/follow", verify,follow);
