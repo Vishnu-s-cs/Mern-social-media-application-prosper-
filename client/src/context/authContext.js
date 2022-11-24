@@ -4,6 +4,8 @@ export const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("user"))||null);
+
+
   // if (JSON.parse(localStorage.getItem("user")) !== undefined) {
   //   setCurrentUser(JSON.parse(localStorage.getItem("user")))
   // }
@@ -19,7 +21,7 @@ export const AuthContextProvider = ({ children }) => {
   }, [currentUser]);
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, setCurrentUser }}>
+    <AuthContext.Provider value={{ currentUser, login, setCurrentUser}}>
       {children}
     </AuthContext.Provider>
   );

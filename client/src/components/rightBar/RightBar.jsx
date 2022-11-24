@@ -18,7 +18,7 @@ function RightBar() {
   useEffect(()=>{
     const getAllUsers = (async()=>{
       makeRequest.get(`users/`).then((users)=>{
-        console.log(users);
+     
         setAllUsers(users.data)
       },[])
     })

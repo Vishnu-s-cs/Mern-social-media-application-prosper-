@@ -67,7 +67,7 @@ const Sidebar = () => {
               <span>Posts</span>
             </li>
           </Link>
-          <Link to="/book" style={{ textDecoration: "none" }}>
+          <Link to="/reports" style={{ textDecoration: "none" }}>
             <li>
               <Book className="icon" />
               <span>Reports</span>

@@ -6,22 +6,22 @@ import {
   Outlet,
   Navigate,
   useLocation,
-  useParams,
 } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
 import LeftBar from "./components/leftBar/LeftBar";
 import RightBar from "./components/rightBar/RightBar";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
+import Messenger from "./pages/messenger/Messenger"
 import "./style.scss";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/authContext";
 import { QueryClient, QueryClientProvider} from '@tanstack/react-query'
 function App() {
-  const {currentUser} = useContext(AuthContext);
-
+  const {currentUser,message} = useContext(AuthContext);
   const { darkMode } = useContext(DarkModeContext);
+  const [right, setRight] = useState(true)
   const queryClient = new QueryClient()
   const Layout = () => {
     return (
@@ -33,7 +33,7 @@ function App() {
           <div style={{ flex: 6 }}>
             <Outlet />
           </div>
-          <RightBar />
+         {right&&<RightBar />}
         </div>
       </div>
       </QueryClientProvider>
@@ -65,7 +65,7 @@ function App() {
         {
           path: "/profile/:id",
           element: <Profile/>,
-        },
+        }
       ],
     },
     {
@@ -75,6 +75,10 @@ function App() {
     {
       path: "/register",
       element: currentUser?<Navigate to="/" />:<Register />,
+    },
+    {
+      path: "/messages",
+      element: <Messenger/>,
     },
   ]);
 

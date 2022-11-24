@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const {verify,verifyTokenAndAuthorization,verifyTokenAndAdmin} = require('../middlewares/verifyToken')
-const {updateUser, blockUser, unblock, getUser, follow, unfollow, deleteUser, getAllUsers} = require('../controllers/userController')
+const {updateUser, blockUser, unblock, getUser, follow, unfollow, deleteUser, getAllUsers, getFriends, reportUser, rejectReport, resolveReport} = require('../controllers/userController')
 
 //update user
 router.put("/:id",verify,updateUser);
@@ -26,5 +26,17 @@ router.put("/:id/unfollow", verify,unfollow);
 
 //delete user
 router.delete("/:id", verifyTokenAndAuthorization,deleteUser);
-  
+
+//get friends
+router.get("/friends/:userId", getFriends);
+
+//report user
+router.put("/:id/reportUser",verify, reportUser);
+
+//reject report
+router.delete("/:id/report",verify, rejectReport);
+
+//resolve report
+router.delete("/:id/rejectReport",verify, resolveReport);
+
 module.exports = router;

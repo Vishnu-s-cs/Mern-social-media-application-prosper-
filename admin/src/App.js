@@ -11,6 +11,7 @@ import { DarkModeContext } from "./context/darkModeContext";
 import AppList from "./pages/appList.jsx/AppList";
 import Booking from "./pages/Booking";
 import { UserContext } from "./Store/UserContext";
+import Report from "./pages/Report/Report";
 function App() {
   const navigate= useNavigate()
   const { darkMode } = useContext(DarkModeContext);
@@ -49,6 +50,9 @@ function App() {
                 path="new"
                 element={<New inputs={productInputs} title="Add New Product" />}
               />
+            </Route>
+            <Route path="reports">
+              <Route index element={<Report />} />
             </Route>
             </>}
           </Route>

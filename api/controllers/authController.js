@@ -87,7 +87,7 @@ exports.adminLogin=async (req, res) => {
               { expiresIn: "5d" }
             );
           const {password,updatedAt,profilePicture,coverPicture,followers,followings,blocked,email,createdAt, ...other } = user._doc;
-          console.log('login success',accessToken);
+ 
           
           res.cookie("accessToken", accessToken, {
             httpOnly: true,

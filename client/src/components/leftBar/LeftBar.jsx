@@ -56,10 +56,12 @@ const LeftBar = () => {
            
           </div>
           </Link>
+          <Link to='/messages' style={{ textDecoration: "none",color:"black",padding:"0",margin:"0" }}>
           <div className="item">
             <EmailOutlinedIcon/>
             <span>Messages</span>
           </div>
+          </Link>
           <div className="item">
             <NotificationsOutlinedIcon/>
             <span>Notifications</span>

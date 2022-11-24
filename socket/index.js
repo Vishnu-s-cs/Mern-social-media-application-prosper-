@@ -31,11 +31,18 @@ io.on("connection", (socket) => {
 
   //send and get message
   socket.on("sendMessage", ({ senderId, receiverId, text }) => {
-    const user = getUser(receiverId);
-    io.to(user.socketId).emit("getMessage", {
+    try {
+      const user = getUser(receiverId);
+    console.log(user,"message send");
+    socket.to(user.socketId).emit("getMessage", {
       senderId,
       text,
+      createdAt:Date.now()
     });
+    } catch (error) {
+      console.log("user not available");
+    }
+    
   });
 
   //when disconnect

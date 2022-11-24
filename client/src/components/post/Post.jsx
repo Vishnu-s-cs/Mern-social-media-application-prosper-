@@ -11,20 +11,60 @@ import ReactTimeAgo from 'react-time-ago'
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../context/authContext";
 import Swal from 'sweetalert2'
+import Modal from 'react-modal';
+import CloseIcon from '@mui/icons-material/Close';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import SendIcon from '@mui/icons-material/Send';
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
+Modal.setAppElement('#root');
 const Post = ({ post }) => {
-  const {currentUser} = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
   const [commentOpen, setCommentOpen] = useState(false);
   const [user, setUser] = useState({});
   const [menuOpen, setMenuOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false);
   const [desc, setDesc] = useState(null)
-  const [liked, setLiked] = useState(post.likes.includes(currentUser._id)?true:false)
+  const [liked, setLiked] = useState(post.likes.includes(currentUser._id) ? true : false)
+  const [report, setReport] = useState('other')
   const queryClient = useQueryClient();
+  const [err, setErr] = useState(null)
+  let subtitle;
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = '#f00';
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
   useEffect(() => {
-    makeRequest.get(`users/${post.userId}`).then((res)=>{
+    makeRequest.get(`users/${post.userId}`).then((res) => {
       setUser(res.data)
-    }).catch((err)=>{console.log(err);})
-    post.likes.includes(currentUser._id)?setLiked(true):setLiked(false)
+    }).catch((err) => { console.log(err); })
+    post.likes.includes(currentUser._id) ? setLiked(true) : setLiked(false)
   }, [post])
 
   const deleteMutation = useMutation(
@@ -38,11 +78,11 @@ const Post = ({ post }) => {
       },
     }
   );
-  
+
   //TEMPORARY
   // const liked = true;
-  const handleLike = ()=>{
-    makeRequest.put(`posts/${post._id}/like`).then(()=>{
+  const handleLike = () => {
+    makeRequest.put(`posts/${post._id}/like`).then(() => {
       queryClient.invalidateQueries(["posts"]);
     })
   }
@@ -61,27 +101,68 @@ const Post = ({ post }) => {
         deleteMutation.mutate(post._id);
       }
     })
-   
+
   };
-  const handleUpdate = ()=>{
+  const handleUpdate = () => {
     // e.preventDefault()
     if (desc) {
-      makeRequest.put(`posts/${post._id}`,{desc}).then((res)=>{
-      setUpdateOpen(!updateOpen)
-      queryClient.invalidateQueries(["posts"]);
+      makeRequest.put(`posts/${post._id}`, { desc }).then((res) => {
+        setUpdateOpen(!updateOpen)
+        queryClient.invalidateQueries(["posts"]);
       })
-    }else{
-      setDesc(null) 
+    } else {
+      setDesc(null)
       setUpdateOpen(!updateOpen)
 
     }
   }
-  // const Input = () => {
-    const handleKeyDown = (event) => {
-      if (event.key === 'Enter') {
-        handleUpdate()
-      }
+
+  const handleReport = () => {
+    // e.preventDefault()
+    if (report=="other"&&desc.trim().length!==0&&desc!=null) {
+      console.log("Entry test");
+      makeRequest.put(`posts/${post._id}/report`, { reason:desc }).then((res) => {
+        console.log(res);
+        Swal.fire({
+          title: 'Reported!',
+          text: 'Thanks for reporting',
+          icon: 'success',
+          confirmButtonText: 'ok'
+        })
+        closeModal()
+        setDesc("")
+        setMenuOpen(false)
+        setErr(null)
+      }).catch((err)=>{
+        setErr(err.response.data)
+      })
+    } else if(report!=="other") {
+      makeRequest.put(`posts/${post._id}/report`, { reason:report }).then((res) => {
+        Swal.fire({
+          title: 'Reported!',
+          text: 'Thanks for reporting',
+          icon: 'success',
+          confirmButtonText: 'ok'
+        })
+        closeModal()
+        setDesc("")
+        setMenuOpen(false)
+        setErr(false)
+      }).catch((err)=>{
+        setErr(err.response.data)
+      })
+
     }
+    else{
+      setErr("Please specify reason")
+    }
+  }
+  // const Input = () => {
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleUpdate()
+    }
+  }
   return (
     <div className="post">
       <div className="container">
@@ -95,21 +176,48 @@ const Post = ({ post }) => {
               >
                 <span className="name">{user.username}</span>
               </Link>
-              <span className="date"><ReactTimeAgo date={post.createdAt}locale="en-US"/></span>
+              <span className="date"><ReactTimeAgo date={post.createdAt} locale="en-US" /></span>
             </div>
           </div>
-         
-          { post.userId === currentUser._id&&<MoreHorizIcon onClick={() => {setMenuOpen(!menuOpen)
-     updateOpen && setUpdateOpen(!updateOpen)
-    }} style={{cursor:"pointer"}}/>}
-          {menuOpen && post.userId === currentUser._id && (
-           <> 
-           <button onClick={handleDelete}>Delete</button>
-            <button onClick={handleUpdate} style={{top:"4rem",backgroundColor:"blue"}}>Update</button>
+
+          <MoreHorizIcon onClick={() => {
+            setMenuOpen(!menuOpen)
+            updateOpen && setUpdateOpen(!updateOpen)
+          }} style={{ cursor: "pointer" }} />
+          {post.userId === currentUser._id ? menuOpen && post.userId === currentUser._id && (
+            <>
+              <button onClick={handleDelete}>Delete</button>
+              <button onClick={handleUpdate} style={{ top: "4rem", backgroundColor: "blue" }}>Update</button>
             </>
-          ) }
-          {updateOpen&&(<><input type="text" placeholder="update description" onChange={(e)=>setDesc(e.target.value)} onKeyDown={handleKeyDown}/></>)}
-         
+          ) : menuOpen && <button onClick={openModal} style={{ backgroundColor: "orange" }}>Report</button>
+          }
+          {updateOpen && (<><input type="text" placeholder="update description" onChange={(e) => setDesc(e.target.value)} onKeyDown={handleKeyDown} /></>)}
+          <Modal
+            isOpen={modalIsOpen}
+            onAfterOpen={afterOpenModal}
+            onRequestClose={closeModal}
+            style={customStyles}
+            contentLabel="Example Modal"
+          >
+            <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Report</h2>
+            <CloseIcon onClick={closeModal} className="close" />
+            <FormControl>
+              <FormLabel id="demo-radio-buttons-group-label">Please specify reason</FormLabel>
+              <RadioGroup
+                aria-labelledby="demo-radio-buttons-group-label"
+                defaultValue="other"
+                name="radio-buttons-group"
+              >
+                <FormControlLabel value="spam" control={<Radio />} label="spam" onChange={e=>{setReport(e.target.value)}}/>
+                <FormControlLabel value="fraud" control={<Radio />} label="fraud" onChange={e=>setReport(e.target.value)}/>
+                <FormControlLabel value="false information" control={<Radio />} label="false information" onClick={e=>setReport(e.target.value)}/>
+                <FormControlLabel value="other" control={<Radio />} label="other" onClick={e=>setReport(e.target.value)}/>
+              </RadioGroup>
+              {report==="other"&&<TextField id="standard-basic" label="please say more about it" variant="standard" onChange={e=>setDesc(e.target.value)}/>}
+              {err&&<span style={{ top: "2rem", color: "red" }} className="err">{err}</span>}
+              <Button variant="contained" endIcon={<SendIcon />} className="sendButton" onClick={handleReport}>Send</Button>
+            </FormControl>
+          </Modal>
         </div>
         <div className="content" onDoubleClick={handleLike}>
           <p>{post.desc}</p>
@@ -117,7 +225,7 @@ const Post = ({ post }) => {
         </div>
         <div className="info">
           <div className="item" onClick={handleLike}>
-            {liked ? <FavoriteOutlinedIcon style={{color:"red"}}/> : <FavoriteBorderOutlinedIcon />}
+            {liked ? <FavoriteOutlinedIcon style={{ color: "red" }} /> : <FavoriteBorderOutlinedIcon />}
             {post.likes.length} Likes
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
@@ -129,7 +237,7 @@ const Post = ({ post }) => {
             Share
           </div> */}
         </div>
-        {commentOpen && <Comments post={post}/>}
+        {commentOpen && <Comments post={post} />}
       </div>
     </div>
   );

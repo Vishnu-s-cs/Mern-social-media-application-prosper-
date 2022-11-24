@@ -11,8 +11,8 @@ const Applications = () => {
     const [err, setErr] = useState(false);
   const [data, setData] = useState([]);
   const userColumns = [ { field: "_id", headerName: "ID", width: 200 }, {
-    field: "userId",
-    headerName: "User id",
+    field: "username",
+    headerName: "of user",
     width: 150,
   }, {
     field: "desc",
@@ -25,16 +25,27 @@ const Applications = () => {
     width: 115,
   }]
   useEffect(() => {
-     axios.get(`posts/`,{withCredentials:true}).then((res)=>{
-      // console.log(res);
-      // console.log(res.data);
-      const posts = res.data
-      setData(posts)
-     }).catch((err) => {
-      localStorage.removeItem("user");
-        setErr(err.response.data)
+    axios.get(`posts/`,{withCredentials:true}).then((res)=>{
+        
+      for(let i=0;i<res.data.length;++i){
+         axios.get("/users/" + res.data[i].userId).then((result)=>{
+          res.data[i].username=result.data.username
+          if (i==res.data.length-1) {
+            
+            setData(res.data)  
   
-    })
+          }
+        }).catch((err)=>{
+          console.log(err);
+        })
+      }
+      console.log(res.data,"2");
+ 
+ }).catch((err) => {
+  localStorage.removeItem("user");
+    setErr(err.response.data)
+
+})
     //  setData(['Id'])
   }, [status])
 
@@ -99,6 +110,16 @@ function handleDelete(item){
          <span>{params.row.comments.length}</span>
         );
       },
+    },{
+      field: "report",
+      headerName: "Reports",
+      width: 100,
+      renderCell: (params) => {
+        // console.log(params.row.comments.length,"params apps");
+        return (
+         <span>{params.row.reports.length}</span>
+        );
+      },
     },
     {
       field: "action",
@@ -110,7 +131,7 @@ function handleDelete(item){
          
           <div className="cellAction">
           
-            <div className="deleteButton" onClick={()=>{handleDelete(params.id)}}>Delete</div>
+            {params.row.reports.length>=5&&<div className="deleteButton" onClick={()=>{handleDelete(params.id)}}>Delete</div>}
            
           </div>
         );
@@ -125,7 +146,7 @@ function handleDelete(item){
     Posts
         
       </div>
-      <DataGrid
+      {data&&<DataGrid
         className="datagrid"
         rows={data}
         columns={userColumns.concat(actionColumn)}
@@ -134,7 +155,8 @@ function handleDelete(item){
         checkboxSelection
         getRowId ={(row) => row._id}
         rowHeight={65}
-      />
+      />}
+      
     </div>
   );
 };

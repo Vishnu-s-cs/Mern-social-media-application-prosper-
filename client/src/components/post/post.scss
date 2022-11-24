@@ -17,9 +17,12 @@
         align-items: center;
         justify-content: space-between;
         position: relative;
+
         .userInfo {
           display: flex;
           gap: 20px;
+
+          
 
           img {
             width: 40px;
@@ -41,7 +44,8 @@
             }
           }
         }
-        input{
+
+        input {
           padding: 5px;
           border: none;
           border-bottom: 1px solid themed("border");
@@ -52,6 +56,7 @@
           right: 61px;
           top: 4rem;
         }
+
         button {
           position: absolute;
           top: 30px;
@@ -62,12 +67,20 @@
           cursor: pointer;
           color: white;
         }
+        .err{
+          position: absolute;
+          top: 30px;
+          right: 0;
+          border: none;
+          padding: 5px;
+          color: rgb(245, 0, 0);
+        }
       }
 
       .content {
         margin: 20px 0px;
-       
-        
+
+
         img {
           width: 100%;
           max-height: 500px;
@@ -92,3 +105,20 @@
     }
   }
 }
+
+  .close {
+    margin-left: 24rem;
+    margin-top: -1.5rem;
+    position: absolute;
+    cursor: pointer;
+  }
+  .ReactModal__Content{
+    
+    min-width: 25rem;
+    .sendButton{
+      margin-top: 10px;
+      width: 6rem;
+      background: orange;
+    }
+  }
+
