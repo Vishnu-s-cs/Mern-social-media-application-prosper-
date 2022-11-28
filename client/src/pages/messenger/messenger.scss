@@ -73,6 +73,7 @@
 .chatOnlineWrapper {
   padding: 10px;
   height: 96%;
+  overflow-y: auto;
 }
 
 .noConversationText {
@@ -99,4 +100,15 @@
   .chatOnline{
     flex: 1px;
   }
+}
+.messageImg {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+.receiver{
+  position: absolute;
+  padding-left: 48px;
 }

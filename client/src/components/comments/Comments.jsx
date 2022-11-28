@@ -44,7 +44,7 @@ const Comments = ({post}) => {
         <button onClick={handleClick}>Send</button>
       </div>
       {sortedComments.map((comment) => (
-            <div className="comment">
+            <div className="comment" key={comment._id}>
               <img src={comment.profilePic} alt="" />
               <div className="info">
                 <span>{comment.name}</span>

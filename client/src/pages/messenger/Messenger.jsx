@@ -13,6 +13,7 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { makeRequest } from "../../axios";
+import InputEmoji from "react-input-emoji";
 
 export default function Messenger() {
   
@@ -27,6 +28,7 @@ export default function Messenger() {
   const [reciever, setReciever] = useState(null)
   const socket = useRef();
   const { currentUser } = useContext(AuthContext);
+  const [conv, setConv] = useState({})
   const scrollRef = useRef();
   useEffect(() => {
     socket.current = io("ws://localhost:8900");
@@ -64,12 +66,13 @@ export default function Messenger() {
   useEffect(() => {
    
     arrivalMessage &&
-      currentChat?.members.includes(arrivalMessage.sender) &&
+      conv?.members.includes(arrivalMessage.sender) &&
       setMessages((prev) => [...prev, arrivalMessage]);
-  }, [arrivalMessage,currentChat]); 
+  }, [arrivalMessage,conv]); 
 
   useEffect(() => {
     socket.current.emit("addUser", currentUser._id);
+    
     socket.current.on("getUsers", (users) => {
       setOnlineUsers(
         currentUser.followings.filter((f) => users.some((u) => u.userId === f))
@@ -77,36 +80,68 @@ export default function Messenger() {
     });
   }, [currentUser]);
 
+  // useEffect(() => {
+  //   const getConversations = async () => {
+  //     try {
+  //       const res = await axios.get("/conversations/" + currentUser._id);
+  //       setConversations(res.data);
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   }; 
+  //   getConversations();
+  // }, [currentUser._id]);
   useEffect(() => {
-    const getConversations = async () => {
-      try {
-        const res = await axios.get("/conversations/" + currentUser._id);
-        setConversations(res.data);
-      } catch (err) {
-        console.log(err);
-      }
+    const getFriends = async () => {
+      const res = await axios.get("/users/friends/" + currentUser._id);
+      setConversations(res.data);
     };
-    getConversations();
-  }, [currentUser._id]);
 
+    getFriends();
+  }, [currentUser._id]);
   useEffect(() => {
     const getMessages = async () => {
       try {
-        const res = await axios.get("/messages/" + currentChat?._id);
-        for (let index = 0; index < res.data.length; index++) {
-          if (res.data[index].sender!=currentUser._id) {
-            
-            makeRequest.get("/users/" + res.data[index].sender).then((response)=>{
-              console.log(response);
-              setReciever(response.data)
+        await axios.get(
+          `/conversations/find/${currentUser._id}/${currentChat}`
+        ).then(async(response)=>{
+          setConv(response.data)
+          if (response.data==null) {
+            await axios.post(
+              `/conversations/`,{senderId:currentUser._id,receiverId:currentChat}
+            ).then(async()=>{
+              await axios.get(
+                `/conversations/find/${currentUser._id}/${currentChat}` 
+              ).then(async(res)=>{
+              // setCurrentChat(res.data);
+              setConv(res.data)
+              await axios.get("/messages/" + res.data?._id).then((res)=>{
+                makeRequest.get("/users/" + currentChat).then((response)=>{
+                  console.log(response);
+                  setReciever(response.data)
+                  
+                })
+                
+                setMessages(res.data);
+              });
               
-            })
-            break;
-          }
+              });
+             
+            });
+          }else{
+            // setCurrentChat(response.data);
+        const res = await axios.get("/messages/" + response.data?._id);
+        makeRequest.get("/users/" + currentChat).then((response)=>{
+          console.log(response);
+          setReciever(response.data)
           
-        }
+        })
         
         setMessages(res.data);
+          }
+          
+        });
+        
       } catch (err) {
         console.log(err);
       }
@@ -121,10 +156,10 @@ export default function Messenger() {
     const message = {
       sender: currentUser._id,
       text: newMessage,
-      conversationId: currentChat._id,
+      conversationId: conv._id,
     };
 
-    const receiverId = currentChat.members.find(
+    const receiverId = conv.members.find( 
       (member) => member !== currentUser._id
     );
 
@@ -154,6 +189,10 @@ export default function Messenger() {
       handleSubmit(event)
     }
   }
+  const handleChange = (newMessage) => {
+    setErr(false)
+    setNewMessage(newMessage);
+  };
   return (
     <>
     <div className={`theme-${darkMode? "dark":"light"} animate-slideleft`}>
@@ -167,7 +206,7 @@ export default function Messenger() {
           <div className="chatMenuWrapper">
             <input value="Inbox" className="chatMenuInput" disabled/>
             {conversations.map((c) => (
-              <div onClick={() => setCurrentChat(c)} key={c._id}>
+              <div onClick={() => setCurrentChat(c._id)} key={c._id}>
                 <Conversation conversation={c} currentUser={currentUser} />
               </div>
             ))}
@@ -175,7 +214,12 @@ export default function Messenger() {
         </div>
         <div className="chatBox">
           <div className="chatBoxWrapper">
-          <input value={reciever?reciever.username:"chat"} className="chatMenuInput" disabled/>
+          {currentChat&&<img
+          className="messageImg"
+          src={reciever?.profilePicture.length!==0?reciever?.profilePicture:"https://images.pexels.com/photos/3686769/pexels-photo-3686769.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"}
+          alt=""
+        />}
+          <input value={reciever?reciever.username:"chat"} className="receiver chatMenuInput" disabled/>
             {currentChat ? (
               <>
                 <div className="chatBoxTop">
@@ -188,13 +232,16 @@ export default function Messenger() {
                 </div>
                 {err&&err}
                 <div className="chatBoxBottom">
-                  <textarea
+                <InputEmoji value={newMessage} 
+                    onChange={handleChange} 
+                    onKeyDown={handleKeyDown}/>
+                  {/* <textarea
                     className="chatMessageInput"
                     placeholder="write something..."
                     onChange={(e) => {setNewMessage(e.target.value);setErr(false)}}
                     value={newMessage}
                     onKeyDown={handleKeyDown}
-                  ></textarea>
+                  ></textarea> */}
                   <button className="chatSubmitButton" onClick={handleSubmit}>
                     Send
                   </button>
@@ -213,6 +260,7 @@ export default function Messenger() {
               onlineUsers={onlineUsers}
               currentId={currentUser._id}
               setCurrentChat={setCurrentChat}
+              setReciever={setReciever}
             />
           </div>
         </div>

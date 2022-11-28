@@ -4,10 +4,33 @@ import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Widget = ({ type }) => {
+  const [user, setUser] = useState({})
+  const [post, setPost] = useState({})
+  const [err, setErr] = useState(false)
   let data;
-
+  useEffect(() => {
+    axios.get(`users/`,{withCredentials:true}).then((res)=>{
+      setUser(res.data)
+     }).catch((e)=>{
+    localStorage.removeItem("user");
+    setErr(e.response.data)
+     })
+  }, [])
+  useEffect(() => {
+    axios.get(`posts/`,{withCredentials:true}).then((res)=>{
+      setPost(res.data)
+     }).catch((e)=>{
+    localStorage.removeItem("user");
+    window.location.replace('/login')
+     })
+  }, [])
+  
+  
   //temporary
   const amount = 100;
   const diff = 20;
@@ -17,7 +40,7 @@ const Widget = ({ type }) => {
       data = {
         title: "USERS",
         isMoney: false,
-        link: "See all users",
+        link: "users",
         icon: (
           <PersonOutlinedIcon
             className="icon"
@@ -47,9 +70,9 @@ const Widget = ({ type }) => {
       break;
     case "earning":
       data = {
-        title: "EARNINGS",
+        title: "Posts",
         isMoney: true,
-        link: "View net earnings",
+        link: "posts",
         icon: (
           <MonetizationOnOutlinedIcon
             className="icon"
@@ -83,9 +106,11 @@ const Widget = ({ type }) => {
       <div className="left">
         <span className="title">{data.title}</span>
         <span className="counter">
-          {data.isMoney && "$"} {amount}
+          {data.isMoney ? post.length:user.length}
         </span>
-        <span className="link">{data.link}</span>
+        <Link to={data.link}>
+        <span className="link">See all {data.link}</span>
+        </Link>
       </div>
       <div className="right">
         <div className="percentage positive">

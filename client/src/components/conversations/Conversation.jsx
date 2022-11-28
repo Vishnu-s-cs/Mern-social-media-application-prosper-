@@ -7,11 +7,11 @@ export default function Conversation({ conversation, currentUser }) {
   // const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
   useEffect(() => {
-    const friendId = conversation.members.find((m) => m !== currentUser._id);
+    // const friendId = conversation.members.find((m) => m !== currentUser._id);
 
     const getUser = async () => {
       try {
-        const res = await axios("/users/" + friendId);
+        const res = await axios("/users/" + conversation._id);
       
         setUser(res.data);
       } catch (err) {

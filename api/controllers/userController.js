@@ -69,6 +69,32 @@ exports.getAllUsers=async (req, res) => {
   }
 }
 
+exports.getUserStats=async (req, res) => {
+ 
+  const today = new Date();
+  const latYear = today.setFullYear(today.setFullYear() - 1);
+
+  try {
+    const data = await User.aggregate([
+      {
+        $project: {
+          month: { $month: "$createdAt" },
+        },
+      },
+      {
+        $group: {
+          _id: "$month",
+          total: { $sum: 1 },
+        },
+      },
+    ]);
+    res.status(200).json(data)
+    console.log(data);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+}
+
 exports.follow=async (req, res) => {
   if (req.user.id !== req.params.id) {
     try {
@@ -198,16 +224,16 @@ exports.rejectReport=async (req, res) => {
 exports.resolveReport=async (req, res) => {
   try {
     var isPostFound=true
-    const post = await Post.findById(req.params.id);
+    const user = await User.findById(req.params.id);
     // const report = await Report.findById(req.query.id)
-    if (!post) {
-      res.status(403).json("post not found");
+    if (!user) {
+      res.status(403).json("user not found");
       isPostFound = false
     }
-    if (post.userId === req.user.id || req.user.isAdmin) {
-      await post.deleteOne()
+    if (req.user.isAdmin) {
+      await user.updateOne({ blocked:true})
       await Report.deleteMany({_id:req.query.id})
-      res.status(200).json("post deleted");
+      res.status(200).json("report resolved");
     } else {
       res.status(403).json("authorization failed");
     }

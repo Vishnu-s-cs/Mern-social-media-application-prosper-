@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const {verify,verifyTokenAndAuthorization,verifyTokenAndAdmin} = require('../middlewares/verifyToken')
-const {updateUser, blockUser, unblock, getUser, follow, unfollow, deleteUser, getAllUsers, getFriends, reportUser, rejectReport, resolveReport} = require('../controllers/userController')
+const {updateUser, blockUser, unblock, getUser, follow, unfollow, deleteUser, getAllUsers, getFriends, reportUser, rejectReport, resolveReport, getUserStats} = require('../controllers/userController')
 
 //update user
 router.put("/:id",verify,updateUser);
@@ -16,6 +16,9 @@ router.get("/:id",getUser);
 
 //get all users
 router.get("/",verify,getAllUsers);
+
+//get userStats
+router.get("/stats/:id",verify,getUserStats);
 
 //follow a user
 router.put("/:id/follow", verify,follow);

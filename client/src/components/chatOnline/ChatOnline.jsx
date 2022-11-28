@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { makeRequest } from "../../axios";
 import "./chatOnline.css";
 
-export default function ChatOnline({ onlineUsers, currentId, setCurrentChat }) {
+export default function ChatOnline({ onlineUsers, currentId, setCurrentChat,setReciever }) {
   const [friends, setFriends] = useState([]);
   const [onlineFriends, setOnlineFriends] = useState([]);
   // const PF = process.env.REACT_APP_PUBLIC_FOLDER;
@@ -22,10 +23,27 @@ export default function ChatOnline({ onlineUsers, currentId, setCurrentChat }) {
 
   const handleClick = async (user) => {
     try {
+   
+          makeRequest.get("/users/" + user._id).then((response)=>{
+            console.log(response);
+            setReciever(response.data)})
+      
       const res = await axios.get(
         `/conversations/find/${currentId}/${user._id}`
       );
-      setCurrentChat(res.data);
+     
+      setCurrentChat(user._id);
+      if (res.data==null) {
+        await axios.post(
+          `/conversations/`,{senderId:currentId,receiverId:user._id}
+        ).then(async()=>{
+          const res = await axios.get(
+            `/conversations/find/${currentId}/${user._id}` 
+          );
+          console.log(res);
+          setCurrentChat(res.data);
+        });
+      }
     } catch (err) {
       console.log(err);
     }
@@ -35,7 +53,7 @@ export default function ChatOnline({ onlineUsers, currentId, setCurrentChat }) {
     <div className="chatOnline">
       <input value="Online" className="chatMenuInput" disabled/>
       {onlineFriends.map((o) => (
-        <div className="chatOnlineFriend" onClick={() => handleClick(o)}>
+        <div className="chatOnlineFriend" onClick={() => handleClick(o)} key={o._id}>
           <div className="chatOnlineImgContainer">
             <img
               className="chatOnlineImg"

@@ -8,6 +8,10 @@ import { AuthContext } from "../../context/authContext";
 import { makeRequest } from "../../axios";
 import {useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
+// import InputEmoji from "react-input-emoji";
+import EmojiPicker from 'emoji-picker-react';
+import { EmojiStyle } from "emoji-picker-react";
 // import { makeRequest } from "../../axios";
 const Share = () => {
 
@@ -16,6 +20,7 @@ const Share = () => {
   const [img, setImg] = useState(null);
   const [uploading, setUploading] = useState(false)
   const {currentUser} = useContext(AuthContext)
+  const [emojiOpen, setEmojiOpen] = useState(false)
   console.log(currentUser);
   const queryClient = useQueryClient();
   const handleChange = (e) => {
@@ -98,6 +103,9 @@ const Share = () => {
         <div className="top">
         <div className="left">
             <img src={currentUser.profilePicture} alt="" />
+            {/* <InputEmoji value={desc} 
+                    onChange={handleChange} 
+                    onKeyDown={handleKeyDown}/> */}
             <input
               type="text"
               placeholder={`What's on your mind ${currentUser.username}?`}
@@ -132,6 +140,10 @@ const Share = () => {
                 <span>Add Image</span>
               </div>
             </label>
+            <div className="item">
+            <InsertEmoticonIcon onClick={()=>setEmojiOpen(!emojiOpen)}/>
+            {emojiOpen&&<EmojiPicker onEmojiClick={(e)=>{setDesc(prev=>{return prev?prev+e.emoji:e.emoji});setEmojiOpen(false);console.log(e)}} />}
+              </div>
             {/* <div className="item">
               <img src={Map} alt="" />
               <span>Add Place</span>

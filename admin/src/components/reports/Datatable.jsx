@@ -55,32 +55,61 @@ const Applications = () => {
     //  setData(['Id'])
   }, [status])
 
-function handleDelete(item,postId,email){
-  Swal.fire({
-    title: 'Are you sure?',
-    text: "You won't be able to revert this!",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Yes, delete it!'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      axios.delete(`posts/${postId}/rejectReport?id=${item}&name=${email}`,{withCredentials:true}).then((response) => {
-        //  console.log(response);
-          if (response.data) {
-              // console.log(response);
-              setStatus(new Date())
-          } else {
-              setErr('Something went wrong')
-          }
-      }).catch((err) => {
-        localStorage.removeItem("user");
-          setErr(err.response.data)
-    
-      })
-    }
-  })
+function handleDelete(item,postId,email,type){
+  if (type=="post") {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.delete(`posts/${postId}/rejectReport?id=${item}&name=${email}`,{withCredentials:true}).then((response) => {
+          //  console.log(response);
+            if (response.data) {
+                // console.log(response);
+                setStatus(new Date())
+            } else {
+                setErr('Something went wrong')
+            }
+        }).catch((err) => {
+          localStorage.removeItem("user");
+            setErr(err.response.data)
+      
+        })
+      }
+    })
+  }else{
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, block'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.delete(`users/${postId}/rejectReport?id=${item}&name=${email}`,{withCredentials:true}).then((response) => {
+          //  console.log(response);
+            if (response.data) {
+                // console.log(response);
+                setStatus(new Date())
+            } else {
+                setErr('Something went wrong')
+            }
+        }).catch((err) => {
+          localStorage.removeItem("user");
+            setErr(err.response.data)
+      
+        })
+      }
+    })
+  }
+  
   
 }
 function handleReject(item,postId,email,type){
@@ -109,7 +138,8 @@ function handleReject(item,postId,email,type){
             setErr(err.response.data)
       
         })
-      }else{
+      }else{ 
+        console.log("not posts",type);
         axios.delete(`users/${postId}/report?id=${item}&name=${email}`,{withCredentials:true}).then((response) => {
           //  console.log(response);
             if (response.data) {

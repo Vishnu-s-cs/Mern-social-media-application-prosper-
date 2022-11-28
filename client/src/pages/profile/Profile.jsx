@@ -27,6 +27,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Swal from 'sweetalert2'
+import axios from "axios";
 const customStyles = {
   content: {
     top: '50%',
@@ -47,6 +48,8 @@ const Profile = () => {
   const [err, setErr] = useState(null)
   let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [modalIsOpen2, setIsOpen2] = useState(false);
+
   const { currentUser } = useContext(AuthContext);
   
   function openModal() {
@@ -144,6 +147,13 @@ const Profile = () => {
     }
   }
   // const Input = () => {
+    const getFollowers = ()=>{
+
+    }
+    const getFollowings=async()=>{
+      const res = await axios.get("/users/friends/" + currentUser._id);
+      console.log(res);
+    }
   return (
     <div className="profile">
       {isLoading ? (
@@ -192,6 +202,7 @@ const Profile = () => {
                     {data.followers.includes(currentUser._id) ? 'following' : 'follow'}
                   </button>
                 }
+                  
                 {/* {rIsLoading ? (
                   "loading"
                 ) : userId === currentUser.id ? (
@@ -203,10 +214,11 @@ const Profile = () => {
                       : "Follow"}
                   </button>
                 )} */}
+                <div className="desc">{data.desc} </div>
                 <div className="item">
 
-                  <span>followers {data.followers.length}</span>&nbsp;&nbsp;
-                  <span>following {data.followings.length}</span>
+                  <span onClick={getFollowers}>followers {data.followers.length}</span>&nbsp;&nbsp;
+                  <span onClick={getFollowings}>following {data.followings.length}</span>
 
                 </div>
               </div>

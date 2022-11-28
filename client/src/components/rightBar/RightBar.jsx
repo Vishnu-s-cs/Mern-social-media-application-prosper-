@@ -12,7 +12,7 @@ import { AuthContext } from '../../context/authContext'
 
 function RightBar() {
   const queryClient = useQueryClient();
-  const {currentUser} = useContext(AuthContext)
+  const {currentUser,setCurrentUser} = useContext(AuthContext)
   const [allUsers, setAllUsers] = useState([])
   
   useEffect(()=>{
@@ -29,7 +29,9 @@ function RightBar() {
     makeRequest.get(`users/`).then((res) => {
     const users = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
-    setAllUsers(users)  
+    setAllUsers(users) 
+    console.log(currentUser,"current users");
+    
     return res.data;
   })
 );
@@ -37,6 +39,8 @@ function RightBar() {
 
   const follow =(userId)=>{
     makeRequest.put(`users/${userId}/follow`,{ userId :currentUser._id})
+    setCurrentUser(prev=>{prev.followings.push(userId);let followings=prev.followings;console.log(followings,userId); return  {...currentUser,followings};}) 
+    console.log(userId);
     queryClient.invalidateQueries(["user"]);
     queryClient.invalidateQueries(["suggestions"]);
     queryClient.invalidateQueries(["posts"]);
@@ -49,7 +53,7 @@ function RightBar() {
       <div className="item">
           <span>New users</span>
           {allUsers.map(user=>(
-          currentUser.username!=user.username &&  !user.followers.includes(currentUser._id) && <div className="user">
+          currentUser.username!=user.username &&  !user.followers.includes(currentUser._id) && <div className="user" key={user._id}>
             <div className="userInfo" key = {user._id} >
               <Link
               to={`/profile/${user._id}`}>

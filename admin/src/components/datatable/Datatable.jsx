@@ -84,6 +84,19 @@ function handleUnblock(userId){
 }
   const actionColumn = [
     {
+      field: "report",
+      headerName: "Reports",
+      width: 200,
+      renderCell: (params) => {
+       console.log(params.reports);
+        return (
+          <div className="cellAction">
+      <span>{params.row.reports?.length}</span>
+          </div>
+        );
+      },
+    },
+    {
       field: "action",
       headerName: "Action",
       width: 200,
