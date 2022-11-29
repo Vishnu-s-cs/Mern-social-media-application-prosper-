@@ -15,11 +15,18 @@
   flex: 3.5;
 }
 
-.chatMenuInput {
+.chatMenuInput{
   width: 90%;
   padding: 10px 0;
   border: none;
-  border-bottom: 1px solid gray;
+  border-bottom: 2px solid #965acd;
+  font-size: 1rem;
+  font-weight: 800;
+  // position: fixed;
+  // background-color: gray;
+  // z-index: 9;
+ 
+
 }
 
 .chatBox {
@@ -74,6 +81,25 @@
   padding: 10px;
   height: 96%;
   overflow-y: auto;
+  overflow-x: hidden;
+}::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #cfa3f9;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #965acd;
+  border-radius: 1rem;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #965acd;
 }
 
 .noConversationText {

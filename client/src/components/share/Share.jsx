@@ -21,7 +21,7 @@ const Share = () => {
   const [uploading, setUploading] = useState(false)
   const {currentUser} = useContext(AuthContext)
   const [emojiOpen, setEmojiOpen] = useState(false)
-  console.log(currentUser);
+
   const queryClient = useQueryClient();
   const handleChange = (e) => {
     const value = e.target.value;
@@ -133,7 +133,7 @@ const Share = () => {
         <hr />
         <div className="bottom">
           <div className="left">
-            <input type="file" name="img" id="file" style={{display:"none"}} accept=".png, .jpeg, jpg" onChange={e=>setImg(e.target.files[0])}/>
+            <input type="file" name="img" id="file" style={{display:"none"}} accept=".png, .jpeg, .jpg" onChange={e=>setImg(e.target.files[0])}/>
             <label htmlFor="file">
               <div className="item">
                 <img src={Image} alt="" />

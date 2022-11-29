@@ -30,7 +30,7 @@ function RightBar() {
     const users = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
     setAllUsers(users) 
-    console.log(currentUser,"current users");
+   
     
     return res.data;
   })

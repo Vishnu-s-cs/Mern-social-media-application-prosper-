@@ -61,6 +61,7 @@ const Post = ({ post }) => {
   }
 
   useEffect(() => {
+   console.log('hi');
     makeRequest.get(`users/${post.userId}`).then((res) => {
       setUser(res.data)
     }).catch((err) => { console.log(err); })

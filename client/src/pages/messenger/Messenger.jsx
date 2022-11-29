@@ -203,8 +203,8 @@ export default function Messenger() {
           <div style={{ flex: 8 }}>
       <div className="messenger">
         <div className="chatMenu">
+        <input value="Inbox" className="chatMenuInput" disabled style={{ marginTop: "0.6rem"}}/>
           <div className="chatMenuWrapper">
-            <input value="Inbox" className="chatMenuInput" disabled/>
             {conversations.map((c) => (
               <div onClick={() => setCurrentChat(c._id)} key={c._id}>
                 <Conversation conversation={c} currentUser={currentUser} />
