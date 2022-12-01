@@ -21,15 +21,11 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (currentUser!=undefined) {
-      if (cookies.get('accessToken')) {
-        console.log('hello');
-    localStorage.setItem("user", JSON.stringify(currentUser));
-        
-      }else{
+      
         cookies.set('accessToken', accessToken, { path: '/' });
         localStorage.setItem("user", JSON.stringify(currentUser));
 
-      }
+      
     }
   }, [currentUser]);
 
