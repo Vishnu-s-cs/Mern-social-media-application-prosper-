@@ -28,7 +28,7 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "https://www.prosper-media.cf")
   next();
 });
-let whiteList = ["https://www.prosper-media.cf","http://localhost:3000","https://www.prosper-admin.cf","http://192.168.0.227:3000"]
+let whiteList = ["http://localhost:3000","https://www.prosper-admin.cf","http://192.168.0.227:3000"]
 app.use(express.json());
 app.use(
   cors({
