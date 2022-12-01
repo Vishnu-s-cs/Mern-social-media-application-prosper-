@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import "./rightBar.scss"
 // import pic from "../../assets/tp-best-mens-hairstyles.jpg"
-import axios from 'axios'
 import { baseUrl, makeRequest } from '../../axios'
 import { useState } from 'react'
 import { useContext } from 'react'

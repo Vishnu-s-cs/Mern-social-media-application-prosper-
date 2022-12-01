@@ -1,9 +1,9 @@
 import { useState } from "react";
 import "./register.scss";
 import FormInput from "../../components/formInput/FormInput";
-import axios from 'axios'
 import {useNavigate,Link} from 'react-router-dom'
 import Swal from 'sweetalert2'
+import { makeRequest } from "../../axios";
 const Register = () => {
   const navigate = useNavigate()
   const [values, setValues] = useState({
@@ -62,7 +62,7 @@ const [error, setError] = useState(false);
   const handleSubmit = async(e) => {
     e.preventDefault();
     try {
-      await axios.post(`/auth/register`,details).then((response) => {
+      await makeRequest.post(`/auth/register`,details).then((response) => {
         console.log('signup success',response);
         navigate('/login')
     }).catch((err)=>{

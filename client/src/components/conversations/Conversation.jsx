@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { makeRequest } from "../../axios";
 import "./conversation.css";
 
 export default function Conversation({ conversation, currentUser }) {
@@ -11,7 +12,7 @@ export default function Conversation({ conversation, currentUser }) {
 
     const getUser = async () => {
       try {
-        const res = await axios("/users/" + conversation._id);
+        const res = await makeRequest.get("/users/" + conversation._id);
       
         setUser(res.data);
       } catch (err) {

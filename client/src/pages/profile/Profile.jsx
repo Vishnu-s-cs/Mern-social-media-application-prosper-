@@ -27,7 +27,6 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Swal from 'sweetalert2'
-import axios from "axios";
 const customStyles = {
   content: {
     top: '50%',
@@ -151,7 +150,7 @@ const Profile = () => {
 
     }
     const getFollowings=async()=>{
-      const res = await axios.get("/users/friends/" + currentUser._id);
+      const res = await makeRequest.get("/users/friends/" + currentUser._id);
       console.log(res);
     }
   return (

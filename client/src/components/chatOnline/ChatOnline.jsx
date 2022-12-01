@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { useEffect, useState } from "react";
 import { makeRequest } from "../../axios";
 import "./chatOnline.css";
@@ -10,7 +10,7 @@ export default function ChatOnline({ onlineUsers, currentId, setCurrentChat,setR
 
   useEffect(() => {
     const getFriends = async () => {
-      const res = await axios.get("/users/friends/" + currentId);
+      const res = await makeRequest.get("/users/friends/" + currentId);
       setFriends(res.data);
     };
 
@@ -28,16 +28,16 @@ export default function ChatOnline({ onlineUsers, currentId, setCurrentChat,setR
             console.log(response);
             setReciever(response.data)})
       
-      const res = await axios.get(
+      const res = await makeRequest.get(
         `/conversations/find/${currentId}/${user._id}`
       );
      
       setCurrentChat(user._id);
       if (res.data==null) {
-        await axios.post(
+        await makeRequest.post(
           `/conversations/`,{senderId:currentId,receiverId:user._id}
         ).then(async()=>{
-          const res = await axios.get(
+          const res = await makeRequest.get(
             `/conversations/find/${currentId}/${user._id}` 
           );
           console.log(res);

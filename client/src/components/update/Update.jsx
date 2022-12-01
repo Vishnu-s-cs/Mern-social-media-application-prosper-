@@ -6,6 +6,7 @@ import Swal from 'sweetalert2'
 import { useQueryClient} from "@tanstack/react-query";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
+import { makeRequest } from "../../axios";
 const Update = ({ setOpenUpdate, user }) => {
   const {currentUser,setCurrentUser} = useContext(AuthContext)
   const [values, setValues] = useState({
@@ -81,7 +82,7 @@ const [error, setError] = useState(false);
   const handleSubmit = async(e) => {
     e.preventDefault();
     try {
-      await axios.put(`/users/${user._id}`,details).then((response) => {
+      await makeRequest.put(`/users/${user._id}`,details).then((response) => {
         console.log('before update',currentUser);
         setCurrentUser({...currentUser,city:details.city,username:details.username,desc:details.desc})
         setOpenUpdate(false)
