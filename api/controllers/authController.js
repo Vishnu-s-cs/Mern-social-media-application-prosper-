@@ -53,9 +53,7 @@ exports.userLogin=async (req, res) => {
               { expiresIn: "5d" }
             );
           const {password,updatedAt,blocked,email,createdAt, ...other } = user._doc;
-          res.cookie("accessToken", accessToken, {
-            httpOnly: true,
-          }).status(200).json({other,accessToken})
+          res.cookie("accessToken", accessToken).status(200).json({other,accessToken})
         
         }
         }
