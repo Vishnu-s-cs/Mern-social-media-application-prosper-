@@ -11,6 +11,7 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");
+const path = require("path")
 dotenv.config();
 
 mongoose.connect(
@@ -29,7 +30,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:3000",
   })
 );
 app.use(cookieParser());
@@ -42,6 +43,7 @@ app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
+
 app.listen(8800, () => {
   console.log("server is running");
 });

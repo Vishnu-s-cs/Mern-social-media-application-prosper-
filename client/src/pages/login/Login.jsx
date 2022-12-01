@@ -44,8 +44,10 @@ const Login = () => {
   const handleSubmit = async(e) => {
     e.preventDefault()
     try {
-      await login(details)
+      await login(details).then(()=>{
       navigate('/')
+
+      })
     } catch (error) {
       console.log(error);
       setErr(error.response.data)
