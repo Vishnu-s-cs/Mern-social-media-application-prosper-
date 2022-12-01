@@ -27,10 +27,11 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", true);
   next();
 });
+let whiteList = ["https://www.prosper-media.cf","http://localhost:3000","https://www.prosper-admin.cf","http://192.168.0.227:3000"]
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://www.prosper-media.cf","http://localhost:3000","https://www.prosper-admin.cf","http://192.168.0.227:3000"],
+    origin: whiteList
   })
 );
 app.use(cookieParser());
