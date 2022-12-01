@@ -10,10 +10,14 @@ import { DarkModeContext } from "../../context/darkModeContext";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import Swal from 'sweetalert2'
+import Cookies from 'universal-cookie';
+
 const LeftBar = () => {
  
   const { currentUser } = useContext(AuthContext);
   const { toggle, darkMode } = useContext(DarkModeContext);
+  const cookies = new Cookies();
+
   const handleLogout = () => {
     Swal.fire({
       title: 'Do you want to logout?',
@@ -29,6 +33,7 @@ const LeftBar = () => {
       }
     }).then((result) => {
       if (result.isConfirmed) {
+        cookies.remove('accessToken');
         localStorage.removeItem("user");
     
         window.location.replace('/login');
