@@ -12,7 +12,7 @@ const Comments = ({post}) => {
   const sortedComments = post.comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
   const config = {
     headers: {
-        'Authorization': `Bearer ${token}`,
+        'token': `Bearer ${token}`,
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 };

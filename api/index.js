@@ -25,18 +25,14 @@ mongoose.connect(
 //middleware
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", true);
-  res.header("Access-Control-Allow-Origin", "https://www.prosper-media.cf")
   next();
 });
-let whiteList = ["http://localhost:3000","https://www.prosper-admin.cf","http://192.168.0.227:3000"]
 app.use(express.json());
-app.use(
-  cors({
-    origin: whiteList
-  })
-);
+
+app.use(cors({
+  origin:["http://localhost:3000","https://www.prosper-media.cf","https://prosper-admin.cf"]
+}));
 app.use(cookieParser());
-app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
 

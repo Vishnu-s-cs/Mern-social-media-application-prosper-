@@ -75,6 +75,7 @@ exports.likeAndUnlike=async (req, res) => {
       }
     } catch (err) {
       if (isPostFound) {
+        console.log("err is here",err);
         res.status(500).json(err);
       }
     }

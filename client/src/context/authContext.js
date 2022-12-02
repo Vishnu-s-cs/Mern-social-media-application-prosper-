@@ -5,19 +5,22 @@ export const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("user"))||null);
   const token = localStorage.getItem('accessToken')||null;
+  const [config, setConfig] = useState(false)
   const [accessToken, setAccessToken] = useState("")
   // if (JSON.parse(localStorage.getItem("user")) !== undefined) {
   //   setCurrentUser(JSON.parse(localStorage.getItem("user")))
   // }
-  const config = {
-    headers: { token: `Bearer ${token}` },      
-}; 
+
   const login = async(details) => {
     //TO DO
     await axios.post(`/auth/login`,details,{withCredentials: true}).then((res)=>{
     console.log(res);
     setCurrentUser(res.data.other)
     setAccessToken(res.data.accessToken)
+    setConfig({
+      headers: { token: `Bearer ${res.data.accessToken}` },      
+  })
+  
     })
    
   };

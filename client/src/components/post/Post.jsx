@@ -34,7 +34,7 @@ const customStyles = {
 };
 Modal.setAppElement('#root');
 const Post = ({ post }) => {
-  const { currentUser,config } = useContext(AuthContext);
+  const { currentUser,config,token } = useContext(AuthContext);
   const [commentOpen, setCommentOpen] = useState(false);
   const [user, setUser] = useState({});
   const [menuOpen, setMenuOpen] = useState(false)
@@ -82,8 +82,15 @@ const Post = ({ post }) => {
   //TEMPORARY
   // const liked = true;
   const handleLike = () => {
-    axios.put(`posts/${post._id}/like`,config).then(() => {
+    const accessToken = localStorage.getItem('accessToken')
+    axios.put(`posts/${post._id}/like`,{headers: {
+      'token': `Bearer ${accessToken}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
+  }
+}).then(() => {
       queryClient.invalidateQueries(["posts"]);
+    }).catch((err)=>{
+      console.log(err,config);
     })
   }
 
