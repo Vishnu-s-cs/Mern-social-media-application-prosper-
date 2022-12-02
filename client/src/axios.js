@@ -7,8 +7,9 @@ const header= localStorage.getItem("accessToken")?{
   }
 
 const instance=axios.create({
-    baseURL:'http://localhost:8800/api',
-    headers:header
+    baseURL:'http://api.prosper-media.cf/api',
+    headers:header,
+    withCredentials:true
 })
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default instance;
