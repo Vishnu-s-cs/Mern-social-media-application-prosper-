@@ -55,6 +55,7 @@ exports.userLogin=async (req, res) => {
           const {password,updatedAt,blocked,email,createdAt, ...other } = user._doc;
           res.cookie("accessToken", accessToken, {
             httpOnly: true,
+            secure:true
           }).status(200).json({other,accessToken})
         
         }
