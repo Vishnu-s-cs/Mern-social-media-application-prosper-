@@ -7,7 +7,7 @@ const header= localStorage.getItem("accessToken")?{
   }
 
 const instance=axios.create({
-    baseURL:'http://api.prosper-media.cf/api',
+    baseURL:'https://api.prosper-media.cf/api',
     headers:header,
     withCredentials:true
 })
