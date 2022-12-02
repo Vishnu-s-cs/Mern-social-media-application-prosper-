@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "./register.scss";
 import FormInput from "../../components/formInput/FormInput";
 import {useNavigate,Link} from 'react-router-dom'
 import Swal from 'sweetalert2'
-import { makeRequest } from "../../axios";
+import axios  from "../../axios";
+import { AuthContext } from "../../context/authContext";
 const Register = () => {
   const navigate = useNavigate()
   const [values, setValues] = useState({
@@ -12,6 +13,7 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
+  const {config} = useContext(AuthContext)
 const [error, setError] = useState(false);
   const inputs = [
     {
@@ -62,7 +64,7 @@ const [error, setError] = useState(false);
   const handleSubmit = async(e) => {
     e.preventDefault();
     try {
-      await makeRequest.post(`/auth/register`,details).then((response) => {
+      await axios.post(`/auth/register`,details,config).then((response) => {
         console.log('signup success',response);
         navigate('/login')
     }).catch((err)=>{

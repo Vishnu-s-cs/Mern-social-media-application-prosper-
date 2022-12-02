@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import "./rightBar.scss"
 // import pic from "../../assets/tp-best-mens-hairstyles.jpg"
-import { baseUrl, makeRequest } from '../../axios'
+import axios from '../../axios'
 import { useState } from 'react'
 import { useContext } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -11,12 +11,12 @@ import { AuthContext } from '../../context/authContext'
 
 function RightBar() {
   const queryClient = useQueryClient();
-  const {currentUser,setCurrentUser} = useContext(AuthContext)
+  const {currentUser,setCurrentUser,config} = useContext(AuthContext)
   const [allUsers, setAllUsers] = useState([])
   
   useEffect(()=>{
     const getAllUsers = (async()=>{
-      makeRequest.get(`users/`).then((users)=>{
+      axios.get(`users/`,config).then((users)=>{
      
         setAllUsers(users.data)
       },[])
@@ -25,7 +25,7 @@ function RightBar() {
   },[])
 
   const { isLoading, error, data } = useQuery(["suggestions"], () =>
-    makeRequest.get(`users/`).then((res) => {
+    axios.get(`users/`,config).then((res) => {
     const users = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
     setAllUsers(users) 
@@ -37,7 +37,7 @@ function RightBar() {
 
 
   const follow =(userId)=>{
-    makeRequest.put(`users/${userId}/follow`,{ userId :currentUser._id})
+    axios.put(`users/${userId}/follow`,{ userId :currentUser._id},config)
     setCurrentUser(prev=>{prev.followings.push(userId);let followings=prev.followings;console.log(followings,userId); return  {...currentUser,followings};}) 
     console.log(userId);
     queryClient.invalidateQueries(["user"]);

@@ -2,12 +2,15 @@ const jwt = require("jsonwebtoken");
 const User=require('../models/User')
 function verify(req, res, next) {
   // const authHeader = req.headers.token;
-  const authHeader = req.cookies.accessToken;
-
-  if (authHeader) {
-    const token = authHeader;
+  const authHeader = req.headers.token;
+  const token = authHeader.split(" ")[1];
+  console.log(token);
+  if (token&&token!==null) {
+    // const token = authHeader.split(" ")[1];
+  
     jwt.verify(token, process.env.SECRET, async(err, user) => {
       if (err) res.status(404).json("Token is not valid!")&&next([err]);
+      else{
       const userDetails = await User.findById(user.id);
    
       if (userDetails?.blocked) {
@@ -17,7 +20,7 @@ function verify(req, res, next) {
         
         req.user = user;
       next();
-      }
+      }}
     });
   } else {
     return res.status(401).json("You are not authenticated!");

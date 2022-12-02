@@ -6,7 +6,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Link } from "react-router-dom";
 import Comments from "../comments/Comments";
 import { useContext, useEffect, useState } from "react";
-import { makeRequest } from "../../axios";
+import axios from "../../axios";
 import ReactTimeAgo from 'react-time-ago'
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../context/authContext";
@@ -34,7 +34,7 @@ const customStyles = {
 };
 Modal.setAppElement('#root');
 const Post = ({ post }) => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser,config } = useContext(AuthContext);
   const [commentOpen, setCommentOpen] = useState(false);
   const [user, setUser] = useState({});
   const [menuOpen, setMenuOpen] = useState(false)
@@ -61,7 +61,7 @@ const Post = ({ post }) => {
   }
 
   useEffect(() => {
-    makeRequest.get(`users/${post.userId}`).then((res) => {
+    axios.get(`users/${post.userId}`,config).then((res) => {
       setUser(res.data)
     }).catch((err) => { console.log(err); })
     post.likes.includes(currentUser._id) ? setLiked(true) : setLiked(false)
@@ -69,7 +69,7 @@ const Post = ({ post }) => {
 
   const deleteMutation = useMutation(
     (postId) => {
-      return makeRequest.delete("/posts/" + postId);
+      return axios.delete("/posts/" + postId,config);
     },
     {
       onSuccess: () => {
@@ -82,7 +82,7 @@ const Post = ({ post }) => {
   //TEMPORARY
   // const liked = true;
   const handleLike = () => {
-    makeRequest.put(`posts/${post._id}/like`).then(() => {
+    axios.put(`posts/${post._id}/like`,config).then(() => {
       queryClient.invalidateQueries(["posts"]);
     })
   }
@@ -106,7 +106,7 @@ const Post = ({ post }) => {
   const handleUpdate = () => {
     // e.preventDefault()
     if (desc) {
-      makeRequest.put(`posts/${post._id}`, { desc }).then((res) => {
+      axios.put(`posts/${post._id}`, { desc },config).then((res) => {
         setUpdateOpen(!updateOpen)
         queryClient.invalidateQueries(["posts"]);
       })
@@ -121,7 +121,7 @@ const Post = ({ post }) => {
     // e.preventDefault()
     if (report=="other"&&desc.trim().length!==0&&desc!=null) {
       console.log("Entry test");
-      makeRequest.put(`posts/${post._id}/report`, { reason:desc }).then((res) => {
+      axios.put(`posts/${post._id}/report`, { reason:desc },config).then((res) => {
         console.log(res);
         Swal.fire({
           title: 'Reported!',
@@ -137,7 +137,7 @@ const Post = ({ post }) => {
         setErr(err.response.data)
       })
     } else if(report!=="other") {
-      makeRequest.put(`posts/${post._id}/report`, { reason:report }).then((res) => {
+      axios.put(`posts/${post._id}/report`, { reason:report },config).then((res) => {
         Swal.fire({
           title: 'Reported!',
           text: 'Thanks for reporting',

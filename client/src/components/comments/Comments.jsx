@@ -2,18 +2,23 @@ import { useContext, useState } from "react";
 import "./comments.scss";
 import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { makeRequest } from "../../axios";
+import axios from "../../axios";
 import ReactTimeAgo from 'react-time-ago'
 
 const Comments = ({post}) => {
   const [desc, setDesc] = useState("");
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser,token } = useContext(AuthContext);
   const queryClient = useQueryClient();
   const sortedComments = post.comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
- 
+  const config = {
+    headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+};
   const mutation = useMutation(
     (newComment) => {
-      return makeRequest.put(`/posts/${post._id}/comment`, newComment);
+      return axios.put(`/posts/${post._id}/comment`, newComment,config);
     },
     {
       onSuccess: () => {

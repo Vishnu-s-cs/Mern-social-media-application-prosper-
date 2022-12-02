@@ -9,10 +9,9 @@ import Message from "../../components/message/Message";
 import ChatOnline from "../../components/chatOnline/ChatOnline";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../context/authContext";
-import axios from "axios";
 import { io } from "socket.io-client";
 import { DarkModeContext } from "../../context/darkModeContext";
-import { makeRequest } from "../../axios";
+import axios from "../../axios";
 import InputEmoji from "react-input-emoji";
 
 export default function Messenger() {
@@ -27,7 +26,7 @@ export default function Messenger() {
   const [err, setErr] = useState(false)
   const [reciever, setReciever] = useState(null)
   const socket = useRef();
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser,config } = useContext(AuthContext);
   const [conv, setConv] = useState({})
   const scrollRef = useRef();
   useEffect(() => {
@@ -93,7 +92,7 @@ export default function Messenger() {
   // }, [currentUser._id]);
   useEffect(() => {
     const getFriends = async () => {
-      const res = await makeRequest.get("/users/friends/" + currentUser._id);
+      const res = await axios.get("/users/friends/" + currentUser._id,config);
       setConversations(res.data);
     };
 
@@ -102,21 +101,21 @@ export default function Messenger() {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        await makeRequest.get(
-          `/conversations/find/${currentUser._id}/${currentChat}`
+        await axios.get(
+          `/conversations/find/${currentUser._id}/${currentChat}`,config
         ).then(async(response)=>{
           setConv(response.data)
           if (response.data==null) {
-            await makeRequest.post(
-              `/conversations/`,{senderId:currentUser._id,receiverId:currentChat}
+            await axios.post(
+              `/conversations/`,{senderId:currentUser._id,receiverId:currentChat},config
             ).then(async()=>{
-              await makeRequest.get(
-                `/conversations/find/${currentUser._id}/${currentChat}` 
+              await axios.get(
+                `/conversations/find/${currentUser._id}/${currentChat}`,config
               ).then(async(res)=>{
               // setCurrentChat(res.data);
               setConv(res.data)
-              await makeRequest.get("/messages/" + res.data?._id).then((res)=>{
-                makeRequest.get("/users/" + currentChat).then((response)=>{
+              await axios.get("/messages/" + res.data?._id,config).then((res)=>{
+                axios.get("/users/" + currentChat,config).then((response)=>{
                   console.log(response);
                   setReciever(response.data)
                   
@@ -130,8 +129,8 @@ export default function Messenger() {
             });
           }else{
             // setCurrentChat(response.data);
-        const res = await makeRequest.get("/messages/" + response.data?._id);
-        makeRequest.get("/users/" + currentChat).then((response)=>{
+        const res = await axios.get("/messages/" + response.data?._id,config);
+        axios.get("/users/" + currentChat,config).then((response)=>{
           console.log(response);
           setReciever(response.data)
           
@@ -170,7 +169,7 @@ export default function Messenger() {
     });
 
     try {
-      const res = await makeRequest.post("/messages", message);
+      const res = await axios.post("/messages", message,config);
       setMessages([...messages, res.data]);
       setNewMessage("");
     } catch (err) {

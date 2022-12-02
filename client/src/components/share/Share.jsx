@@ -5,21 +5,20 @@ import Image from "../../assets/img.png";
 import { useContext, useState } from "react";
 import storage from "../../firebase";
 import { AuthContext } from "../../context/authContext";
-import { makeRequest } from "../../axios";
+import  axios  from "../../axios";
 import {useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
 // import InputEmoji from "react-input-emoji";
 import EmojiPicker from 'emoji-picker-react';
 import { EmojiStyle } from "emoji-picker-react";
-// import { makeRequest } from "../../axios";
+// import { axios } from "../../axios";
 const Share = () => {
 
   // const [file, setFile] = useState(null)
   const [desc, setDesc] = useState(null)
   const [img, setImg] = useState(null);
   const [uploading, setUploading] = useState(false)
-  const {currentUser} = useContext(AuthContext)
+  const {currentUser,config} = useContext(AuthContext)
   const [emojiOpen, setEmojiOpen] = useState(false)
 
   const queryClient = useQueryClient();
@@ -45,7 +44,7 @@ const Share = () => {
           uploadTask.snapshot.ref.getDownloadURL().then(async(url) => {
            
            
-            makeRequest.post('/posts',{desc:desc,img:url})
+            axios.post('/posts',{desc:desc,img:url},config)
             queryClient.invalidateQueries(["posts"]);
             setDesc("")
             setImg(null)
@@ -65,7 +64,7 @@ const Share = () => {
   const handleUpload = (e) => {
     if (desc?.trim().length!==0&&desc!=null) { 
       if (img==null) {
-        makeRequest.post('/posts',{desc:desc})
+        axios.post('/posts',{desc:desc},config)
               queryClient.invalidateQueries(["posts"]);
               setDesc("")
       }
@@ -77,18 +76,18 @@ const Share = () => {
       ]);}
     }
     else{
-      makeRequest.get('https://api.adviceslip.com/advice').then((res)=>{
+      axios.get('https://api.adviceslip.com/advice').then((res)=>{
         setDesc(res.data.slip.advice)
       })
      
     }
     
-  //  await makeRequest.post('/posts',post)
+  //  await axios.post('/posts',post)
   };
   // const queryClient = useQueryClient();
   // const mutation = useMutation(
   //   (newPost) => {
-  //     return makeRequest.post("/posts", newPost);
+  //     return axios.post("/posts", newPost);
   //   },
   //   {
   //     onSuccess: () => {

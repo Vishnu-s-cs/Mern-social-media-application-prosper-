@@ -1,22 +1,22 @@
 import Post from "../post/Post";
 import "./posts.scss";
 import {useQuery } from '@tanstack/react-query'
-import { makeRequest } from "../../axios";
-import { useState } from "react";
+import  axios  from "../../axios";
+import { useContext, useState } from "react";
 import Cookies from 'universal-cookie';
+import { AuthContext } from "../../context/authContext";
 
 const Posts = ({userId}) => {
   const [err, setErr] = useState(false)
-  const cookies = new Cookies();
-
+  const {config} = useContext(AuthContext)
   const { isLoading, error, data } = useQuery(["posts"], () =>
-  makeRequest.get(userId ?  `posts/profile/${userId}` : "posts/timeline/all").then((res) => {
+  axios.get(localStorage.getItem("accessToken")&&userId ?  (`posts/profile/${userId}`,config) : "posts/timeline/all",config).then((res) => {
     const sortedPosts = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
     return sortedPosts;
   }).catch((e)=>{
     localStorage.removeItem("user");
-    cookies.remove('accessToken');
+    // localStorage.removeItem("accessToken");
     setErr(e.response.data+"please re-login");
   })
 );

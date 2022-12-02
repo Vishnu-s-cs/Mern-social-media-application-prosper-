@@ -1,12 +1,14 @@
 import "./message.css";
-import { useEffect, useState } from "react";
-import { makeRequest } from "../../axios";
+import { useContext, useEffect, useState } from "react";
+import axios from "../../axios";
 import ReactTimeAgo from 'react-time-ago'
+import { AuthContext } from "../../context/authContext";
 export default function Message({ message, own }) {
   const [user, setUser] = useState({})
+  const {config} = useContext(AuthContext)
   useEffect(() => {
     async function getUser (){
-    const res = await makeRequest.get("/users/" + message.sender)
+    const res = await axios.get("/users/" + message.sender,config)
     setUser(res.data)
    }
     getUser()

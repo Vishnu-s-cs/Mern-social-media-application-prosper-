@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-
-export const makeRequest = axios.create({
-    baseURL:"http://localhost:8800/api/",
-    withCredentials:true
-})
+const instance=axios.create({
+    baseURL:'http://localhost:8800/api',
+});
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+export default instance;

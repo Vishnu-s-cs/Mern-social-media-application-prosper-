@@ -1,14 +1,13 @@
 import { useState } from "react";
 import "./update.scss";
 import FormInput from "../../components/formInput/FormInput";
-import axios from 'axios'
 import Swal from 'sweetalert2'
 import { useQueryClient} from "@tanstack/react-query";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
-import { makeRequest } from "../../axios";
+import axios  from "../../axios";
 const Update = ({ setOpenUpdate, user }) => {
-  const {currentUser,setCurrentUser} = useContext(AuthContext)
+  const {currentUser,setCurrentUser,config} = useContext(AuthContext)
   const [values, setValues] = useState({
     username: user.username,
     email: user.email,
@@ -82,7 +81,7 @@ const [error, setError] = useState(false);
   const handleSubmit = async(e) => {
     e.preventDefault();
     try {
-      await makeRequest.put(`/users/${user._id}`,details).then((response) => {
+      await axios.put(`/users/${user._id}`,details,config).then((response) => {
         console.log('before update',currentUser);
         setCurrentUser({...currentUser,city:details.city,username:details.username,desc:details.desc})
         setOpenUpdate(false)

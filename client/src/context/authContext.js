@@ -1,18 +1,21 @@
 import { createContext, useEffect, useState } from "react";
-import { makeRequest } from "../axios";
+import axios from "../axios";
 import Cookies from 'universal-cookie';
 export const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("user"))||null);
-  const cookies = new Cookies();
+  const token = localStorage.getItem('accessToken')||null;
   const [accessToken, setAccessToken] = useState("")
   // if (JSON.parse(localStorage.getItem("user")) !== undefined) {
   //   setCurrentUser(JSON.parse(localStorage.getItem("user")))
   // }
+  const config = {
+    headers: { token: `Bearer ${token}` },      
+}; 
   const login = async(details) => {
     //TO DO
-    await makeRequest.post(`/auth/login`,details,{withCredentials: true}).then((res)=>{
-    
+    await axios.post(`/auth/login`,details,{withCredentials: true}).then((res)=>{
+    console.log(res);
     setCurrentUser(res.data.other)
     setAccessToken(res.data.accessToken)
     })
@@ -22,15 +25,17 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     if (currentUser!=undefined) {
       
-        cookies.set('accessToken', accessToken, { path: '/' });
         localStorage.setItem("user", JSON.stringify(currentUser));
+        localStorage.setItem("accessToken", accessToken);
+
+        // console.log(cookies.get('accessToken'));
 
       
     }
   }, [currentUser]);
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, setCurrentUser}}>
+    <AuthContext.Provider value={{ currentUser, login, setCurrentUser, token,config}}>
       {children}
     </AuthContext.Provider>
   );

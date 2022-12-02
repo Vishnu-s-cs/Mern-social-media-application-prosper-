@@ -1,16 +1,17 @@
 
-import { useEffect, useState } from "react";
-import { makeRequest } from "../../axios";
+import { useContext, useEffect, useState } from "react";
+import axios from "../../axios";
+import { AuthContext } from "../../context/authContext";
 import "./chatOnline.css";
 
 export default function ChatOnline({ onlineUsers, currentId, setCurrentChat,setReciever }) {
   const [friends, setFriends] = useState([]);
   const [onlineFriends, setOnlineFriends] = useState([]);
   // const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-
+  const {config} = useContext(AuthContext)
   useEffect(() => {
     const getFriends = async () => {
-      const res = await makeRequest.get("/users/friends/" + currentId);
+      const res = await axios.get("/users/friends/" + currentId,config);
       setFriends(res.data);
     };
 
@@ -24,21 +25,21 @@ export default function ChatOnline({ onlineUsers, currentId, setCurrentChat,setR
   const handleClick = async (user) => {
     try {
    
-          makeRequest.get("/users/" + user._id).then((response)=>{
+          axios.get("/users/" + user._id,config).then((response)=>{
             console.log(response);
             setReciever(response.data)})
       
-      const res = await makeRequest.get(
-        `/conversations/find/${currentId}/${user._id}`
+      const res = await axios.get(
+        `/conversations/find/${currentId}/${user._id}`,config
       );
      
       setCurrentChat(user._id);
       if (res.data==null) {
-        await makeRequest.post(
-          `/conversations/`,{senderId:currentId,receiverId:user._id}
+        await axios.post(
+          `/conversations/`,{senderId:currentId,receiverId:user._id},config
         ).then(async()=>{
-          const res = await makeRequest.get(
-            `/conversations/find/${currentId}/${user._id}` 
+          const res = await axios.get(
+            `/conversations/find/${currentId}/${user._id}`,config
           );
           console.log(res);
           setCurrentChat(res.data);

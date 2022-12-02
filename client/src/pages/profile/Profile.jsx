@@ -10,7 +10,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { makeRequest } from "../../axios";
+import  axios  from "../../axios";
 import { useLocation, useParams } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../../context/authContext";
@@ -49,7 +49,7 @@ const Profile = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [modalIsOpen2, setIsOpen2] = useState(false);
 
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser,config } = useContext(AuthContext);
   
   function openModal() {
     setIsOpen(true);
@@ -68,7 +68,7 @@ const Profile = () => {
   const userId = id;
 
   const { isLoading, error, data } = useQuery(["user"], () =>
-    makeRequest.get("/users/" + userId).then((res) => {
+    axios.get("/users/" + userId,config).then((res) => {
       console.log(res.data);
       return res.data;
     })
@@ -77,7 +77,7 @@ const Profile = () => {
   // const { isLoading: rIsLoading, data: relationshipData } = useQuery(
   //   ["relationship"],
   //   () =>
-  //     makeRequest.get("/relationships?followedUserId=" + userId).then((res) => {
+  //     axios.get("/relationships?followedUserId=" + userId).then((res) => {
   //       return res.data;
   //     })
   // );
@@ -89,8 +89,8 @@ const Profile = () => {
   const mutation = useMutation(
     (following) => {
       if (following)
-        return makeRequest.put(`users/${userId}/unfollow`);
-      return makeRequest.put(`users/${userId}/follow`);
+        return axios.put(`users/${userId}/unfollow`,config);
+      return axios.put(`users/${userId}/follow`,config);
     },
     {
       onSuccess: () => {
@@ -107,7 +107,7 @@ const Profile = () => {
     // e.preventDefault()
     if (report=="other"&&desc.trim().length!==0&&desc!=null) {
       console.log("Entry test");
-      makeRequest.put(`posts/${userId}/reportUser`, { reason:desc }).then((res) => {
+      axios.put(`posts/${userId}/reportUser`, { reason:desc },config).then((res) => {
         console.log(res);
         Swal.fire({
           title: 'Reported!',
@@ -124,7 +124,7 @@ const Profile = () => {
        
       })
     } else if(report!=="other") {
-      makeRequest.put(`users/${userId}/reportUser`, { reason:report }).then((res) => {
+      axios.put(`users/${userId}/reportUser`, { reason:report },config).then((res) => {
         Swal.fire({
           title: 'Reported!',
           text: 'Thanks for reporting',
@@ -150,7 +150,7 @@ const Profile = () => {
 
     }
     const getFollowings=async()=>{
-      const res = await makeRequest.get("/users/friends/" + currentUser._id);
+      const res = await axios.get("/users/friends/" + currentUser._id,config);
       console.log(res);
     }
   return (
