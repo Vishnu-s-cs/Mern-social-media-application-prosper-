@@ -83,7 +83,7 @@ const Post = ({ post }) => {
   // const liked = true;
   const handleLike = () => {
     const accessToken = localStorage.getItem('accessToken')
-    axios.put(`posts/${post._id}/like`,{headers: {
+    axios.put(`posts/${post._id}/like`,{},{headers: {
       'token': `Bearer ${accessToken}`,
       'Content-Type': 'application/x-www-form-urlencoded'
   }

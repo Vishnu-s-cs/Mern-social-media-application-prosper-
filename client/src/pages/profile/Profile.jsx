@@ -89,8 +89,8 @@ const Profile = () => {
   const mutation = useMutation(
     (following) => {
       if (following)
-        return axios.put(`users/${userId}/unfollow`,config);
-      return axios.put(`users/${userId}/follow`,config);
+        return axios.put(`users/${userId}/unfollow`,{},config);
+      return axios.put(`users/${userId}/follow`,{},config);
     },
     {
       onSuccess: () => {

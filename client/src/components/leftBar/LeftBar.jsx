@@ -33,7 +33,7 @@ const LeftBar = () => {
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        cookies.remove('accessToken');
+        localStorage.removeItem("accessToken");
         localStorage.removeItem("user");
     
         window.location.replace('/login');
