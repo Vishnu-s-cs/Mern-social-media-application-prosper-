@@ -221,7 +221,7 @@ export default function Messenger() {
           <input value={reciever?reciever.username:"chat"} className="receiver chatMenuInput" disabled/>
             {currentChat ? (
               <>
-                <div className="chatBoxTop">
+                <div className="chatBoxTop mt-3">
                 
                   {messages.map((m) => (
                     <div ref={scrollRef} key={m.createdAt}>
@@ -247,7 +247,7 @@ export default function Messenger() {
                 </div>
               </>
             ) : (
-              <span className="noConversationText">
+              <span className="noConversationText font-bold text-5xl text-center mt-32">
                 Open a conversation to start a chat.
               </span>
             )}

@@ -24,7 +24,7 @@ export default function Conversation({ conversation, currentUser }) {
   }, [currentUser, conversation]);
 
   return (
-    <div className="conversation">
+    <div className="conversation hover:bg-slate-400 rounded-full">
       <img
         className="conversationImg"
         src={

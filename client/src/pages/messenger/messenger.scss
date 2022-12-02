@@ -2,7 +2,7 @@
 
 .messenger {
   @include themify($themes) {
-    background-color: themed("bgSoft");
+
   height: calc(100vh - 70px);
   display: flex;
 }
@@ -12,7 +12,7 @@
 
 
 .chatMenu {
-  flex: 3.5;
+  flex: 3;
 }
 
 .chatMenuInput{
@@ -30,7 +30,7 @@
 }
 
 .chatBox {
-  flex: 5.5;
+  flex: 6;
 }
 
 .chatBoxWrapper {

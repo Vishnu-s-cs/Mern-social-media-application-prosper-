@@ -1,6 +1,7 @@
 const Post = require("../models/Post");
 const User = require("../models/User");
 const Report = require("../models/Reports")
+const NotificationModel = require("../models/Notification");
 exports.createPost=async (req, res) => {
   
     try {
@@ -60,6 +61,8 @@ exports.deletePost=async (req, res) => {
 
 exports.likeAndUnlike=async (req, res) => {
     try {
+      console.log(req.body.postId);
+      console.log("Reached here");
       var isPostFound=true
       const post = await Post.findById(req.params.id);
       if (!post) {
@@ -68,10 +71,28 @@ exports.likeAndUnlike=async (req, res) => {
       }
       if (!post.likes.includes(req.user.id)) {
         await post.updateOne({ $push: { likes: req.user.id } });
-        res.status(200).json("The post has been liked");
+        if (post.userId != req.params.id) {
+          NotificationModel.create({
+            userId: post.userId,
+            emiterId: req.user.id,
+            text: 'liked your post.',
+            postId: req.body.postId
+          })
+            .then((response) => res.status(200).json("post liked"))
+            .catch((error) => res.status(500).json(error))
+        } else res.status(200).json("post liked")
       } else {
         await post.updateOne({ $pull: { likes: req.user.id } });
-        res.status(200).json("like removed");
+        if (post.userId != req.params.id) {
+          NotificationModel.deleteOne({
+            userId: post.userId,
+            emiterId: req.user.id,
+            text: 'liked your post.',
+            postId: req.body.postId
+          })
+            .then((response) => res.status(200).json("post disliked"))
+            .catch((error) => res.status(500).json(error))
+        } else res.status(200).json("post removed") 
       }
     } catch (err) {
       if (isPostFound) {

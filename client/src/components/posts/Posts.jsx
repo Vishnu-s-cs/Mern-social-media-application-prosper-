@@ -17,7 +17,7 @@ const Posts = ({userId}) => {
     return sortedPosts;
   }).catch((e)=>{
     localStorage.removeItem("user");
-    localStorage.removeItem("accessToken");
+    // localStorage.removeItem("accessToken");
     setErr(e.response.data+"please re-login");
   })
 );

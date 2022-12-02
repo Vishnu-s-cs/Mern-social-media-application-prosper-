@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const Report = require("../models/Reports");
 const bcrypt = require("bcrypt");
-
+const NotificationModel = require("../models/Notification")
 exports.updateUser = async (req, res) => {
 
     if (req.body.password) {
@@ -103,7 +103,13 @@ exports.follow=async (req, res) => {
       if (!user.followers.includes(req.user.id)) {
         await user.updateOne({ $push: { followers: req.user.id } });
         await currentUser.updateOne({ $push: { followings: req.params.id } });
-        res.status(200).json("user has been followed");
+        await NotificationModel.create({
+          userId: req.params.id,
+          emiterId:req.body.userId,
+          text:"started following you"
+      }).then(()=>{
+          res.status(200).json("user has been followed");
+      })
       } else {
         res.status(403).json("you already follow this user");
       }

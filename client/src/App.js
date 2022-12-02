@@ -18,6 +18,7 @@ import { useContext, useState } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/authContext";
 import { QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import Notifications from "./pages/notification/Notifications";
 function App() {
   const {currentUser,message} = useContext(AuthContext);
   const { darkMode } = useContext(DarkModeContext);
@@ -65,6 +66,10 @@ function App() {
         {
           path: "/profile/:id",
           element: <Profile/>,
+        },
+        {
+          path:"/notifications",
+          element:<Notifications/>
         }
       ],
     },
@@ -80,6 +85,7 @@ function App() {
       path: "/messages",
       element: <Messenger/>,
     },
+    
   ]);
 
   return (
