@@ -4,7 +4,7 @@ function verify(req, res, next) {
   // const authHeader = req.headers.token;
   const authHeader = req.headers.cookie.split("=")[1];
   // console.log(authHeader);
-  console.log(req.headers.cookie.split("=")[1],"cookie");
+  // console.log(req.headers.cookie.split("=")[1],"cookie");
 
   if (authHeader) {
     const token = authHeader;
