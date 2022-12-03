@@ -2,8 +2,14 @@
 
 .messenger {
   @include themify($themes) {
+  
+    width: 89%;
+    margin-left: auto;
+    margin-right: auto;
+    border: solid 1px;
+    margin-top: 3rem;
 
-  height: calc(100vh - 70px);
+  height: calc(100vh - 106px);
   display: flex;
 }
 
@@ -16,10 +22,10 @@
 }
 
 .chatMenuInput{
-  width: 90%;
+  width: 100%;
   padding: 10px 0;
   border: none;
-  border-bottom: 2px solid #965acd;
+  border-bottom: 2px solid;
   font-size: 1rem;
   font-weight: 800;
   // position: fixed;
@@ -74,7 +80,10 @@
 .chatOnline {
  flex: 3; 
 }
-
+.chatMenuWrapper{
+  border-right: solid 2px;
+  height: 91%!important;
+}
 .chatMenuWrapper,
 .chatBoxWrapper,
 .chatOnlineWrapper {
@@ -88,18 +97,18 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #cfa3f9;
+  background: #ffffff;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #965acd;
+  background: #f1f5f9;
   border-radius: 1rem;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #965acd;
+  background: #f1f5f9;
 }
 
 .noConversationText {
@@ -112,19 +121,19 @@
 
 @media screen and (max-width: 768px) {
   .chatMenu {
-    flex: 1;
+    flex: 6;
   }
 
-  .chatMenuInput {
-    display: none;
-  }
+  // .chatMenuInput {
+  //   display: none;
+  // }
 
   .chatBox{
-    flex: 10;
+    flex: 6;
   }
 
   .chatOnline{
-    flex: 1px;
+    flex: 0px;
   }
 }
 .messageImg {
