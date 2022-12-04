@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 app.use(express.json()); 
 app.use(
   cors({
-    origin: ["http://localhost:3000","https://www.prosper-media.cf","https://api.prosper-media.cf"],
+    origin: ["http://localhost:3000","https://www.prosper-media.cf","https://api.prosper-media.cf","https://admin.prosper-media.cf"],
   })
 ); 
 app.use(cookieParser());
