@@ -4,8 +4,8 @@
   @include themify($themes) {
     flex:1.5;
     position: sticky;
-    top: 70px;
-    height: calc(100vh - 70px);
+    top: 50px;
+    height: calc(100vh - 51px);
     overflow: scroll;
     background-color: themed("bg");
     color: themed("textColor");
@@ -24,6 +24,10 @@
     font-weight: 400;
     font-size: 61px;
     padding-left: 2rem;
+    }
+    .logo{
+      padding-right: 2rem;
+      padding-top: 4rem;
     }
     .container {
       padding: 20px;

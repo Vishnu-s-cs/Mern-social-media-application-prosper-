@@ -27,6 +27,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Swal from 'sweetalert2'
+import FollowModal from "../../components/followModal/FollowModal";
 const customStyles = {
   content: {
     top: '50%',
@@ -48,12 +49,29 @@ const Profile = () => {
   let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);
   const [modalIsOpen2, setIsOpen2] = useState(false);
-
+  const [modalIsOpen3, setIsOpen3] = useState(false)
+  const [allUsers, setAllUsers] = useState([])
   const { currentUser,config } = useContext(AuthContext);
   
   function openModal() {
     setIsOpen(true);
   }
+  function openModal2() {
+    setIsOpen2(!modalIsOpen2);
+  }
+  function openModal3() {
+    setIsOpen3(!modalIsOpen3);
+  }
+  useEffect(()=>{
+    const getAllUsers = (async()=>{
+      axios.get(`users/`,config).then((users)=>{
+        
+        setAllUsers(users.data)
+      },[])
+    })
+    getAllUsers()
+   
+  },[])
 
   function afterOpenModal() {
     // references are now sync'd and can be accessed.
@@ -69,7 +87,7 @@ const Profile = () => {
 
   const { isLoading, error, data } = useQuery(["user"], () =>
     axios.get("/users/" + userId,config).then((res) => {
-      console.log(res.data);
+     
       return res.data;
     })
   );
@@ -106,9 +124,9 @@ const Profile = () => {
   const handleReport = () => {
     // e.preventDefault()
     if (report=="other"&&desc.trim().length!==0&&desc!=null) {
-      console.log("Entry test");
+   
       axios.put(`posts/${userId}/reportUser`, { reason:desc },config).then((res) => {
-        console.log(res);
+      
         Swal.fire({
           title: 'Reported!',
           text: 'Thanks for reporting',
@@ -151,7 +169,7 @@ const Profile = () => {
     }
     const getFollowings=async()=>{
       const res = await axios.get("/users/friends/" + currentUser._id,config);
-      console.log(res);
+
     }
   return (
     <div className="profile">
@@ -216,9 +234,11 @@ const Profile = () => {
                 <div className="desc">{data.desc} </div>
                 <div className="item">
 
-                  <span onClick={getFollowers}>followers {data.followers.length}</span>&nbsp;&nbsp;
-                  <span onClick={getFollowings}>following {data.followings.length}</span>
-
+                  <span onClick={openModal3}style={{cursor:"pointer"}} >followers {data.followers.length}</span>&nbsp;&nbsp;
+                  <span onClick={openModal2} style={{cursor:"pointer"}}>following {data.followings.length}</span>
+                  {modalIsOpen3&&<FollowModal setIsOpen2={openModal3} ofUser={data} allUsers={{allUsers}} followings={false}/>}
+      
+                  {modalIsOpen2&&<FollowModal setIsOpen2={openModal2} ofUser={data} allUsers={{allUsers}} followings={true}/>}
                 </div>
               </div>
               <div className="right">
@@ -257,7 +277,7 @@ const Profile = () => {
           </div>
         </>
       )}
-      {openUpdate && (console.log(openUpdate, "opened"), <Update setOpenUpdate={setOpenUpdate} user={data} />)}
+      {openUpdate && <Update setOpenUpdate={setOpenUpdate} user={data} />}
       
     </div>
   );

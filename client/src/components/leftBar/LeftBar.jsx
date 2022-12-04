@@ -48,12 +48,12 @@ const LeftBar = () => {
   return (
     <div className="leftBar">
           <Link to="/" style={{ textDecoration: "none"}}>
-          <span className="icon">prosper</span>
+          <img src="https://firebasestorage.googleapis.com/v0/b/revflix-af00d.appspot.com/o/items%2F1670157309611imgprosper-high-resolution-logo-black-on-transparent-background.png?alt=media&token=d0f1efcf-55aa-4eda-9a5b-b758f386aedb" alt="logo" className="logo"/>
         </Link>
 
       <div className="container">
         <div className="menu">
-        <Link to="/" style={{ textDecoration: "none",color:"black",padding:"0",margin:"0" }} replace>
+        <Link to="/" style={{ textDecoration: "none",padding:"0",margin:"0" }} replace>
           <div className="item">
           
             <HomeOutlinedIcon/>
@@ -61,17 +61,19 @@ const LeftBar = () => {
            
           </div>
           </Link>
-          <Link to='/messages' style={{ textDecoration: "none",color:"black",padding:"0",margin:"0" }}>
+          <Link to='/messages' style={{ textDecoration: "none",padding:"0",margin:"0" }}>
           <div className="item">
             <EmailOutlinedIcon/>
             <span>Messages</span>
           </div>
           </Link>
+          <Link to='/notifications' style={{ textDecoration: "none",padding:"0",margin:"0" }}>
           <div className="item">
             <NotificationsOutlinedIcon/>
             <span>Notifications</span>
           </div>
-        <Link to={'/profile/'+currentUser._id} style={{ textDecoration: "none",color:"black",padding:"0",margin:"0" }}>
+          </Link>
+        <Link to={'/profile/'+currentUser._id} style={{ textDecoration: "none",padding:"0",margin:"0" }}>
 
           <div className="user">
             <img

@@ -2,41 +2,40 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import './followModal.css'
-
-function FollowModal({setOpenModal, allUsers, users,followings}){
+import { Link } from "react-router-dom";
+function FollowModal({setIsOpen2, allUsers,ofUser,followings}){
+    //  console.log(allUsers.allUsers,"-----");
+    const users =allUsers.allUsers;
     const queryClient =useQueryClient();
     const{currentUser} = useContext(AuthContext)
-
+    const altImg = "https://avatars.githubusercontent.com/u/69767?v=4";
     const modalHandler = () =>{
-        setOpenModal(false)
+        setIsOpen2(false)
         queryClient.invalidateQueries(["user"])
-        window.location.reload(false);
     }
 
     return (
         <div className="modalBackground" onClick={() => {
-            setOpenModal(false);
+            setIsOpen2();
           }}>
           <div className="modalContainer animate-slideleft">
             <div className="titleCloseBtn">
               <button
-                onClick={() => {
-                  setOpenModal(false);
-                }}
+                onClick={()=>setIsOpen2()}
               >
                 X
               </button>
             </div>
             <div className="title">
                 {followings?
-              <h1>People {users.username} Follows</h1>
-                : <h1>People Following {users.username} </h1> }
+              <h1>People {ofUser.username} follows</h1>
+                : <h1>People following {ofUser.username} </h1> }
             </div>
             <div className="body overflow-x-auto">
               
     
-            {followings?allUsers.map(user=>(
-                user.followers.includes(users._id) && <div className="user">
+            {followings?users.map(user=>(
+                user.followers.includes(ofUser._id) && <div className="user">
                 <div className="userInfo flex items-center mt-5 hover:bg-gray-300 rounded-full" key = {user._id}  onClick={()=>modalHandler()} >
                   <Link
                   to={`/profile/${user._id}`}>
@@ -49,8 +48,8 @@ function FollowModal({setOpenModal, allUsers, users,followings}){
                 
               </div>
               )):
-              allUsers.map(user=>(
-                user.following.includes(users._id) && <div className="user">
+              users.map(user=>(
+                user.followings.includes(ofUser._id) && <div className="user">
                 <div className="userInfo flex items-center mt-5 hover:bg-gray-300 rounded-full" key = {user._id}  onClick={()=>modalHandler()} >
                   <Link
                   to={`/profile/${user._id}`}>
@@ -72,14 +71,14 @@ function FollowModal({setOpenModal, allUsers, users,followings}){
     
             </div>
             <div className="footer">
-              <button
+              {/* <button
                 onClick={() => {
-                  setOpenModal(false);
+                  setIsOpen2(false);
                 }}
                 id="cancelBtn"
               >
                 Cancel
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
