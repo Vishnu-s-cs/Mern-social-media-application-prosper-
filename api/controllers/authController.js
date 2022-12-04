@@ -50,7 +50,7 @@ exports.userLogin=async (req, res) => {
             const accessToken =jwt.sign(
               { id: user._id, email:user.email},
               process.env.SECRET,
-              { expiresIn: "5d" }
+              { expiresIn: "7d" }
             );
           const {password,updatedAt,blocked,email,createdAt, ...other } = user._doc;
           res.cookie("accessToken", accessToken, {

@@ -4,21 +4,26 @@ import {useQuery } from '@tanstack/react-query'
 import  axios  from "../../axios";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const Posts = ({userId}) => {
+  const navigate = useNavigate()
   const [err, setErr] = useState(false)
-  const {config} = useContext(AuthContext)
+  const {config,setCurrentUser} = useContext(AuthContext)
   
 
   const { isLoading, error, data } = useQuery(["posts"], () =>
-  axios.get(config&&userId ?  (`posts/profile/${userId}`,config) : "posts/timeline/all",config).then((res) => {
-    const sortedPosts = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-
-    return sortedPosts;
+  axios.get(userId ?  `posts/profile/${userId}` : "posts/timeline/all",config).then((res) => {
+    const sortedPosts = res.data.length>2?res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)):res.data;
+    return sortedPosts || [];
   }).catch((e)=>{
     localStorage.removeItem("user");
     // localStorage.removeItem("accessToken");
-    setErr(e.response.data+"please re-login");
+    console.log(err);
+
+    setErr(e.response?.data+"please re-login");
+    setCurrentUser(false)
+    navigate('/login')
   })
 );
 

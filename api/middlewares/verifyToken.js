@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const User=require('../models/User')
 function verify(req, res, next) {
   // const authHeader = req.headers.token;
-  const authHeader = req.headers.cookie.split("=")[1];
+  const authHeader = req.headers?.cookie?.split("=")[1] || req.headers?.token?.split(" ")[1];
   // console.log(authHeader);
   // console.log(req.headers.cookie.split("=")[1],"cookie");
 

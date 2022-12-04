@@ -30,7 +30,7 @@ export default function Messenger() {
   const [conv, setConv] = useState({})
   const scrollRef = useRef();
   useEffect(() => {
-    socket.current = io("ws://localhost:8900");
+    socket.current = io("https://socket.prosper-media.cf/");
     socket.current.on("getMessage", (data) => {
       setArrivalMessage({
         sender: data.senderId,

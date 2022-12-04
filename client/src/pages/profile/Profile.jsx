@@ -258,6 +258,7 @@ const Profile = () => {
         </>
       )}
       {openUpdate && (console.log(openUpdate, "opened"), <Update setOpenUpdate={setOpenUpdate} user={data} />)}
+      
     </div>
   );
 };
