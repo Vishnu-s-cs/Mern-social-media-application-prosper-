@@ -8,7 +8,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import axios from "../../axios";
 
 // const data = [
 //   { name: "January", Total: 1200 },

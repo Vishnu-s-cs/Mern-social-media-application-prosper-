@@ -1,7 +1,7 @@
 import { useState,useContext} from "react";
 import FormInput from "../../components/FormInput";
 // import {userUrl} from '../../constants/constant'
-import axios from 'axios'
+import axios from '../../axios'
 import {useNavigate} from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { UserContext } from "../../Store/UserContext";
@@ -47,15 +47,14 @@ const Login = () => {
     console.log('login');
     e.preventDefault();
     await axios.post(`/auth/admin-login`,details).then((response) => {
-        
-      console.log(response.data);
+     
 			localStorage.setItem("user", JSON.stringify(response.data.other));
       setAdminDetails(response.data)
      
       navigate('/')
     
               }).catch((err)=>{
-                console.log(err);
+              
                 setErr(err.response.data)
                 Swal.fire({
                   title: 'Error!',

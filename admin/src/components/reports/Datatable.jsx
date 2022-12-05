@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 // import { userColumns, userRows } from "../../datatablesource";
 import { useState } from "react";
 import { useEffect } from "react";
-import axios from 'axios'
+import axios from '../../axios'
 import Swal from 'sweetalert2'
 
 const Applications = () => {

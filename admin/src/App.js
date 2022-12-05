@@ -9,7 +9,6 @@ import "./style/dark.scss";
 import { useContext, useEffect } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import AppList from "./pages/appList.jsx/AppList";
-import Booking from "./pages/Booking";
 import { UserContext } from "./Store/UserContext";
 import Report from "./pages/Report/Report";
 function App() {
@@ -19,7 +18,7 @@ function App() {
   const user= JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
-   if (!user) {
+   if (!user) {  
     navigate('/login')
    }
   }, [user])
@@ -33,7 +32,7 @@ function App() {
           
             <Route index element={<Home />} />
             {/* <Route path="login" element={<Login />} /> */}
-            <Route path="book" element={<Booking/>}></Route>
+           
             <Route path="users">
               <Route index element={<List />} />
               <Route path=":userId" element={<Single />} />
