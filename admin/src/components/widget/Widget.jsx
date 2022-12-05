@@ -5,7 +5,7 @@ import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalance
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../axios";
 import { Link } from "react-router-dom";
 
 const Widget = ({ type }) => {
@@ -18,6 +18,7 @@ const Widget = ({ type }) => {
       setUser(res.data)
      }).catch((e)=>{
     localStorage.removeItem("user");
+    console.log(e);
     setErr(e.response.data)
      })
   }, [])
