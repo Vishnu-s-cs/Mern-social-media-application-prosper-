@@ -2,8 +2,11 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/Admin");
-const dotenv = require("dotenv");
-
+require("dotenv").config();
+const serverSID = process.env.Twilio_ServerSID
+const accoutSid = process.env.ACCOUNT_SID;
+const authToken = process.env.AUTH_TOKEN;
+const client = require("twilio")(accoutSid, authToken);
 exports.register= async (req, res) => {
     try {
       //generate new password
@@ -103,4 +106,67 @@ exports.adminLogin=async (req, res) => {
       res.status(500).json(err)
     }
   }
-
+  exports.sentotpHandler=async(req, res) =>{
+    try{
+    
+    
+      console.log(req.body,"hello");
+    const user=await User.findOne({ phone: req.body.phno })
+    console.log(user,"user");
+    if(!user){
+      res.json({err:"user not found register first"})
+    }else{
+        client.verify
+        .services(serverSID)
+        .verifications.create({
+          to: `+91${req.body.phno}`,
+          channel: 'sms',
+        })
+        .then((data) => {
+          res.json('otp sent')
+        })
+        .catch((err) => {
+          res.json({ err: "otp cannot be sent " })
+        })
+    }
+    }catch(err){
+      res.json({err:err})
+    }
+    }
+    exports.verifyotpHandler=async(req, res) =>{
+      const { otp, phno } = req.body
+      client.verify
+        .services(serverSID)
+        .verificationChecks.create({ to: `+91${phno}`, code: otp })
+        .then(async (resp) => {
+          console.log(resp);
+          if (!resp.valid) {
+            res.json({err:"invalid otp"})
+          } else {
+            let user = await User.findOne({ phone: req.body.phno })//get users details
+            console.log(user);
+            
+            if (!user) {
+              res.status(200).json({ message: 'user not found' })
+            } else {
+              const accessToken =jwt.sign(
+                { id: user._id, email:user.email,isAdmin:user.isAdmin},
+                process.env.SECRET,
+                { expiresIn: "5d" }
+              );
+            const {password,updatedAt,blocked,email,createdAt, ...other } = user._doc;
+              
+            res.cookie("accessToken", accessToken, {
+              httpOnly: true,
+              secure:true
+            }).status(200).json({other,accessToken})
+            }
+          }
+        }).catch((err) => {
+          console.log(err)
+          res.json({ err: "error happend in otp verify" })
+    
+        })
+    
+    
+    }
