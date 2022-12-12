@@ -115,22 +115,15 @@ const Profile = () => {
     (following) => {
       if (following){
       
-        setCurrentUser(prev=>{
-          const index = prev.followings.indexOf(userId);
-          if (index > -1) { // only splice array when item is found
-            prev.followings.splice(index, 1); // 2nd parameter means remove one item only
-          }
-          let followings=prev.followings;return  {...currentUser,followings};})
-        console.log(userId,currentUser);
+       
         
-        return axios.put(`users/${userId}/unfollow`,{},config);
+        return axios.put(`users/${userId}/unfollow`,{},config)
      
       } 
       else{
 
-      setCurrentUser(prev=>{prev.followings.push(userId);let followings=prev.followings; return  {...currentUser,followings};})
-      console.log(userId,currentUser);
-        return axios.put(`users/${userId}/follow`,{},config);
+    
+        return axios.put(`users/${userId}/follow`,{},config)
       
     }
       
