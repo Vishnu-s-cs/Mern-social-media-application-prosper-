@@ -15,7 +15,8 @@ import axios from "../../axios";
 import InputEmoji from "react-input-emoji";
 import { QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import Modal from 'react-modal';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const customStyles = {
   content: {
     top: '50%',
@@ -75,9 +76,24 @@ export default function Messenger() {
    
     arrivalMessage &&
       conv?.members.includes(arrivalMessage.sender) &&
-      setMessages((prev) => [...prev, arrivalMessage]);
-  }, [arrivalMessage,conv]); 
+      setMessages((prev) => [...prev, arrivalMessage])
 
+  }, [arrivalMessage,conv]); 
+  useEffect(() => {
+   
+    arrivalMessage &&
+      !conv?.members.includes(arrivalMessage.sender) &&toast(`you have a message from${arrivalMessage.sender}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        });
+
+  }, [arrivalMessage]); 
 
   useEffect(() => {
     socket.current.emit("addUser", currentUser._id);
@@ -234,7 +250,20 @@ export default function Messenger() {
   return (
     <>
     <div className={`theme-${darkMode? "dark":"light"} animate-slideleft`}>
-
+    <ToastContainer
+position="top-right"
+autoClose={5000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="light"
+/>
+{/* Same as */}
+<ToastContainer />
       <Navbar />
       <div style={{ display: "flex" }}>
       <QueryClientProvider client={queryClient}>
