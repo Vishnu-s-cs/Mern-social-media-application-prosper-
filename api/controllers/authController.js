@@ -19,6 +19,7 @@ exports.register= async (req, res) => {
           username: req.body.username,
           email: req.body.email,
           password: hashedPassword,
+          phone: req.body.phone
         });
   
         //save user and respond
@@ -109,12 +110,11 @@ exports.adminLogin=async (req, res) => {
   exports.sentotpHandler=async(req, res) =>{
     try{
     
-    
-      console.log(req.body,"hello");
     const user=await User.findOne({ phone: req.body.phno })
     console.log(user,"user");
-    if(!user){
-      res.json({err:"user not found register first"})
+    if(!user||user==null){
+      console.log("hi");
+      res.status(403).json("please register before login")
     }else{
         client.verify
         .services(serverSID)
@@ -126,11 +126,11 @@ exports.adminLogin=async (req, res) => {
           res.json('otp sent')
         })
         .catch((err) => {
-          res.json({ err: "otp cannot be sent " })
+          res.status(403).json("something went wrong! please try again later")
         })
     }
     }catch(err){
-      res.json({err:err})
+      res.status(500).json(err)
     }
     }
     exports.verifyotpHandler=async(req, res) =>{
@@ -141,7 +141,7 @@ exports.adminLogin=async (req, res) => {
         .then(async (resp) => {
           console.log(resp);
           if (!resp.valid) {
-            res.json({err:"invalid otp"})
+            res.status(403).json({err:"invalid otp"})
           } else {
             let user = await User.findOne({ phone: req.body.phno })//get users details
             console.log(user);
@@ -164,7 +164,7 @@ exports.adminLogin=async (req, res) => {
           }
         }).catch((err) => {
           console.log(err)
-          res.json({ err: "error happend in otp verify" })
+          res.status(500).json({ err: "error happend in otp verify" })
     
         })
     

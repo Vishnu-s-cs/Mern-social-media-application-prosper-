@@ -76,9 +76,8 @@ const Share = () => {
       ]);}
     }
     else{
-      axios.get('https://api.adviceslip.com/advice').then((res)=>{
-        setDesc(res.data.slip.advice)
-      })
+     
+   
      
     }
     

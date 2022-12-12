@@ -13,7 +13,19 @@ import { io } from "socket.io-client";
 import { DarkModeContext } from "../../context/darkModeContext";
 import axios from "../../axios";
 import InputEmoji from "react-input-emoji";
+import { QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import Modal from 'react-modal';
 
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
 export default function Messenger() {
   
   const { darkMode } = useContext(DarkModeContext);
@@ -29,8 +41,26 @@ export default function Messenger() {
   const { currentUser,config } = useContext(AuthContext);
   const [conv, setConv] = useState({})
   const scrollRef = useRef();
+  const queryClient = new QueryClient()
+  const [notCount, setNotCount] = useState(0)
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [messageReq, setMessageReq] = useState([])
+  let subtitle;
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = 'blue';
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
   useEffect(() => {
-    socket.current = io("https://socket.prosper-media.cf/");
+    socket.current = io("ws://localhost:8900/");
     socket.current.on("getMessage", (data) => {
       setArrivalMessage({
         sender: data.senderId,
@@ -39,28 +69,7 @@ export default function Messenger() {
       });
     });
   }, []);
- 
-//  useEffect(()=>{
-//   setMessage(false)
-//   return()=>{setMessage(true)}
-//  },[])
-  // socket.current.on("getMessage", (data) => {
-  //   console.log("emitted");
-  //   setArrivalMessage({
-  //     sender: data.senderId,
-  //     text: data.text,
-  //     createdAt: Date.now(),
-  //   });
-  // });
-  // useEffect(()=>{
-  //   socket.current.on("getMessage", (data) => {
-  //     setArrivalMessage({
-  //       sender: data.senderId,
-  //       text: data.text,
-  //       createdAt: Date.now(),
-  //     });
-  //   });
-  // },[send])
+
 
   useEffect(() => {
    
@@ -68,6 +77,7 @@ export default function Messenger() {
       conv?.members.includes(arrivalMessage.sender) &&
       setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage,conv]); 
+
 
   useEffect(() => {
     socket.current.emit("addUser", currentUser._id);
@@ -79,17 +89,29 @@ export default function Messenger() {
     });
   }, [currentUser]);
 
-  // useEffect(() => {
-  //   const getConversations = async () => {
-  //     try {
-  //       const res = await axios.get("/conversations/" + currentUser._id);
-  //       setConversations(res.data);
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   }; 
-  //   getConversations();
-  // }, [currentUser._id]);
+  useEffect(() => {
+    const getConversations = async () => {
+      try {
+        const res = await axios.get("/conversations/" + currentUser._id);
+        console.log('convs',res.data);
+        // setMessageReq(res.data)
+        // console.log(currentUser.followings.includes(res.data[0].members[0]),"followings"); 
+        res.data.map(e=>{
+          // console.log(e.members.find((m) => m !== currentUser._id));
+          var sender=e.members.find((m) => m !== currentUser._id)
+          if(!currentUser.followings.includes(sender)){
+            setMessageReq([...messageReq,e])
+            console.log(e,"hi");
+          }
+          
+        })
+       
+      } catch (err) {
+        console.log(err);
+      }
+    }; 
+    getConversations();
+  }, [currentUser._id]);
   useEffect(() => {
     const getFriends = async () => {
       const res = await axios.get("/users/friends/" + currentUser._id,config);
@@ -99,13 +121,14 @@ export default function Messenger() {
     getFriends();
   }, [currentUser._id]);
   useEffect(() => {
+    setNotCount(0)
     const getMessages = async () => {
       try {
         await axios.get(
           `/conversations/find/${currentUser._id}/${currentChat}`,config
         ).then(async(response)=>{
           setConv(response.data)
-          if (response.data==null) {
+          if (response.data==null&&currentChat!=null) {
             await axios.post(
               `/conversations/`,{senderId:currentUser._id,receiverId:currentChat},config
             ).then(async()=>{
@@ -131,7 +154,7 @@ export default function Messenger() {
             // setCurrentChat(response.data);
         const res = await axios.get("/messages/" + response.data?._id,config);
         axios.get("/users/" + currentChat,config).then((response)=>{
-          console.log(response);
+          
           setReciever(response.data)
           
         })
@@ -152,16 +175,17 @@ export default function Messenger() {
     e.preventDefault();
     if (newMessage.trim().length!==0&&newMessage!=null) {
    
-    const message = {
-      sender: currentUser._id,
-      text: newMessage,
-      conversationId: conv._id,
-    };
+  
 
     const receiverId = conv.members.find( 
       (member) => member !== currentUser._id
     );
-
+    const message = {
+      sender: currentUser._id,
+      receiverId,
+      text: newMessage,
+      conversationId: conv._id,
+    };
     socket.current.emit("sendMessage", {
       senderId: currentUser._id,
       receiverId,
@@ -169,7 +193,11 @@ export default function Messenger() {
     });
 
     try {
-      const res = await axios.post("/messages", message,config);
+      let sendNot=false
+      setNotCount(notCount+1)
+      onlineUsers.includes(receiverId)||notCount===0?sendNot=false:sendNot=true
+
+      const res = await axios.post("/messages", {...message,sendNot},config);
       setMessages([...messages, res.data]);
       setNewMessage("");
     } catch (err) {
@@ -198,15 +226,31 @@ export default function Messenger() {
 
       <Navbar />
       <div style={{ display: "flex" }}>
+      <QueryClientProvider client={queryClient}>
           <LeftBar />
+      </QueryClientProvider>
           <div style={{ flex: 8 }}>
+        <div className="msgReq" onClick={openModal}>Message requests</div>
+        <Modal
+            isOpen={modalIsOpen}
+            onAfterOpen={afterOpenModal}
+            onRequestClose={closeModal}
+            style={customStyles}
+            contentLabel="Example Modal"
+          >
+             {messageReq.map((c) => (
+              <div onClick={() => {setCurrentChat(c.members.find((m) => m !== currentUser._id));setIsOpen(false)}} key={c._id}>
+                <Conversation conversation={c} currentUser={currentUser} req={true}/>
+              </div>
+            ))}
+            </Modal>
       <div className="messenger">
         <div className="chatMenu">
         <input value="Inbox" className="chatMenuInput" disabled style={{ marginTop: "0.6rem",textAlign:"center"}}/>
           <div className="chatMenuWrapper">
             {conversations.map((c) => (
               <div onClick={() => setCurrentChat(c._id)} key={c._id}>
-                <Conversation conversation={c} currentUser={currentUser} />
+                <Conversation conversation={c} currentUser={currentUser} req={false}/>
               </div>
             ))}
           </div>

@@ -88,6 +88,7 @@ const Post = ({ post }) => {
       'Content-Type': 'application/x-www-form-urlencoded'
   }
 }).then(() => {
+      setLiked(!liked)
       queryClient.invalidateQueries(["posts"]);
     }).catch((err)=>{
       console.log(err,config);

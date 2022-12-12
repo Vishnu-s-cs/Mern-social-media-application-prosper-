@@ -3,12 +3,16 @@
 .profile {
   @include themify($themes) {
     background-color: themed("bgSoft");
-
+    
     .images {
       width: 100%;
       height: 300px;
       position: relative;
-
+      .edit{
+        margin-left: 31rem;
+        top: 22rem;
+        font-size: xx-large;
+      }
       .cover {
         width: 100%;
         height: 100%;
@@ -26,6 +30,7 @@
         margin: auto;
         top: 200px;
       }
+     
     }
     .profileContainer {
       padding: 20px 70px;

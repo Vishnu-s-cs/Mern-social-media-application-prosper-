@@ -4,17 +4,55 @@ import FormInput from "../../components/formInput/FormInput";
 import {Link, useNavigate} from 'react-router-dom'
 // import Cookies from 'universal-cookie';
 import { AuthContext } from "../../context/authContext";
+import Modal from 'react-modal';
+import SendIcon from '@mui/icons-material/Send';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
+import CloseIcon from '@mui/icons-material/Close';
+import { Grid } from "@mui/material";
+import axios from "../../axios";
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
+
 
 const Login = () => {
   // const cookies = new Cookies();
   // const navigate = useNavigate()
   const [err, setErr] = useState(false);
+  const [otp, setOtp] = useState(false);
+  const [phone, setPhone] = useState(false)
+  const [status, setStatus] = useState(false)
+  const [number, setNumber] = useState(false)
   const [values, setValues] = useState({
     email: "",
     password: "",
   });
-  const { login } = useContext(AuthContext);
+  const { login ,setCurrentUser,setConfig} = useContext(AuthContext);
   const navigate = useNavigate()
+  let subtitle;
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = 'blue';
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
   const inputs = [
    
     {
@@ -57,9 +95,47 @@ const Login = () => {
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
+  const handleOTP = (e)=>{
+   e.preventDefault()
+   if (phone.trim().length===10) {
+   setStatus("please wait...")
+    axios.post('auth/sendotp',{phno:phone}).then(()=>{
+      setNumber(phone)
+      setStatus("otp sent successfully")
+    }).catch((err)=>{
+      setStatus(false)
+      setErr(err.response.data)
+    })
+   }else{
+    setErr("please enter a valid phone no.")
+   }
+  }
+
+  const verifyOTP = (e)=>{
+    e.preventDefault()
+   if (otp.trim().length>0&&number) {
+   setStatus("please wait...")
+    axios.post('auth/otplogin',{otp:otp,phno:number}).then((res)=>{
+      setCurrentUser(res.data.other)
+      console.log(res.data);
+      localStorage.setItem("accessToken", res.data.accessToken);
+      setConfig({
+        headers: { token: `Bearer ${res.data.accessToken}` },      
+    })
+      navigate('/')
+
+    }).catch((err)=>{
+     console.log(err);
+      setErr(err.response.data.err)
+    })
+   }else{
+    setErr("something went wrong please try again")
+   }
+  }
+  
 
   return (
-    <div className="app">
+    <div className="app" >
       <form onSubmit={handleSubmit}>
         <h1 style={{"paddingTop":"10px"}} className="icon">Prosper</h1>
         <div className="msg" style={{"paddingBottom":"10px"}}>Login to see what your friends are doing</div>
@@ -73,8 +149,13 @@ const Login = () => {
         ))}
         <div className="error"> {err&&err}</div>
        
-        <button>Login</button>
-
+        <button type="submit">Login</button>
+        <div style={{width: "100%", height: "20px", borderBottom: "1px solid black", textAlign: "center",marginTop:"-15px",marginBottom:"6px"}}>
+  <span style={{fontSize: "23px", backgroundColor: "#F3F5F6", padding: "0 10px;"}}>
+    OR
+  </span>
+</div>
+        <button type="button" onClick={openModal}>Login with OTP</button>
             
      
           <div style={{"paddingBottom":"29px"}}>
@@ -82,7 +163,33 @@ const Login = () => {
            
           </div>
       </form>
+      <Modal
+            isOpen={modalIsOpen}
+            onAfterOpen={afterOpenModal}
+            onRequestClose={closeModal}
+            style={customStyles}
+            contentLabel="Example Modal"
+          >
+            <h2 ref={(_subtitle) => (subtitle = _subtitle)}>OTP</h2>
+            <CloseIcon onClick={closeModal} className="close" />
+           
+
+            <FormControl>
+            {err&&<span style={{ top: "2rem", color: "red" }} className="err">{err}</span>}
+            {status&&<span style={{ top: "2rem", color: "green" }} >{status}</span>}
+              <TextField id="standard-basic" label="Enter your phone no." variant="standard" onChange={e=>{setPhone(e.target.value);setErr(false)}}/>
+              <Button variant="contained" endIcon={<SendIcon />} className="sendButton" onClick={handleOTP}>Send</Button>
+              <TextField id="standard-basic" label="Enter OTP" variant="standard" onChange={e=>setOtp(e.target.value)}/>
+              {/* {err&&<span style={{ top: "2rem", color: "red" }} className="err">{err}</span>} */}
+              <Grid container>
+
+              <Button variant="contained"  className="sendButton" onClick={verifyOTP} style={{backgroundColor:"blue" ,display:"inline"}}>Login</Button>&nbsp;&nbsp;
+              <Button variant="contained" endIcon={<SendIcon />} className="sendButton" onClick={handleOTP}>Resend</Button>
+              </Grid>
+            </FormControl>
+          </Modal>
     </div>
+    
   );
 };
 

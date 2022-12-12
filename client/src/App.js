@@ -19,6 +19,7 @@ import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/authContext";
 import { QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import Notifications from "./pages/notification/Notifications";
+import Error from "./pages/Error";
 function App() {
   const {currentUser,message} = useContext(AuthContext);
   const { darkMode } = useContext(DarkModeContext);
@@ -70,6 +71,13 @@ function App() {
         {
           path:"/notifications",
           element:<Notifications/>
+        },{
+          path: "*",
+          element: (
+            <QueryClientProvider client={queryClient}>
+              <Error />
+            </QueryClientProvider>
+          ),
         }
       ],
     },
@@ -83,7 +91,7 @@ function App() {
     },
     {
       path: "/messages",
-      element: <Messenger/>,
+      element: currentUser?<Messenger/>:<Navigate to="/login" />,
     },
     
   ]);

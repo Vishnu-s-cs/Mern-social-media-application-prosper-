@@ -10,7 +10,7 @@ const Posts = ({userId}) => {
   const navigate = useNavigate()
   const [err, setErr] = useState(false)
   const {config,setCurrentUser} = useContext(AuthContext)
-  
+     
 
   const { isLoading, error, data } = useQuery(["posts"], () =>
   axios.get(userId ?  `posts/profile/${userId}` : "posts/timeline/all",config).then((res) => {

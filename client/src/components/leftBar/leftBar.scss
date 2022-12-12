@@ -82,4 +82,11 @@
       }
     }
   }
+  @media screen and (max-width: 768px) {
+    .item{
+      span{
+        display: none;
+      }
+    }
+}
 }

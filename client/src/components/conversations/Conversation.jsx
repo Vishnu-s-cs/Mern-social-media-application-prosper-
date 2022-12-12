@@ -4,17 +4,25 @@ import axios from "../../axios";
 import { AuthContext } from "../../context/authContext";
 import "./conversation.css";
 
-export default function Conversation({ conversation, currentUser }) {
+export default function Conversation({ conversation, currentUser,req}) {
   const [user, setUser] = useState(null);
   // const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const {config} = useContext(AuthContext)
   useEffect(() => {
-    // const friendId = conversation.members.find((m) => m !== currentUser._id);
+    let friendId = ""
+    if (req) {
+       friendId = conversation.members.find((m) => m !== currentUser._id);
+       console.log("else part",friendId);
+    }
+    else{
+      friendId = conversation._id
+    }
+    // 
 
     const getUser = async () => {
       try {
-        const res = await axios.get("/users/" + conversation._id,config);
-      
+        const res = await axios.get("/users/" + friendId,config);
+        // console.log("data is",res.data);
         setUser(res.data);
       } catch (err) {
         console.log(err);

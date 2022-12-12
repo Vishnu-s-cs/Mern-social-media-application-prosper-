@@ -28,6 +28,9 @@ import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Swal from 'sweetalert2'
 import FollowModal from "../../components/followModal/FollowModal";
+import EditIcon from "@mui/icons-material/Edit";
+import storage from "../../firebase";
+import { Link } from "react-router-dom";
 const customStyles = {
   content: {
     top: '50%',
@@ -44,14 +47,16 @@ const Profile = () => {
   const [menuOpen, setMenuOpen] = useState(false)
   const [report, setReport] = useState('other')
   const [desc, setDesc] = useState(null)
-
+  const [profileModal, setProfileModal] = useState(false)
   const [err, setErr] = useState(null)
   let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);
   const [modalIsOpen2, setIsOpen2] = useState(false);
   const [modalIsOpen3, setIsOpen3] = useState(false)
   const [allUsers, setAllUsers] = useState([])
-  const { currentUser,config } = useContext(AuthContext);
+  const { currentUser,config,setCurrentUser} = useContext(AuthContext);
+  const [profilePic, setProfilePic] = useState(false)
+  const [uploading, setUploading] = useState(false)
   
   function openModal() {
     setIsOpen(true);
@@ -80,6 +85,7 @@ const Profile = () => {
 
   function closeModal() {
     setIsOpen(false);
+    setProfileModal(false)
   }
 
   const { id } = useParams()
@@ -99,6 +105,7 @@ const Profile = () => {
   //       return res.data;
   //     })
   // );
+
 
   const queryClient = useQueryClient();
 
@@ -164,13 +171,63 @@ const Profile = () => {
     }
   }
   // const Input = () => {
-    const getFollowers = ()=>{
-
-    }
-    const getFollowings=async()=>{
-      const res = await axios.get("/users/friends/" + currentUser._id,config);
-
-    }
+    const upload = (items) => {
+      items.forEach((item) => {
+        const fileName = new Date().getTime() + item.label + item.file.name;
+        const uploadTask = storage.ref(`/items/${fileName}`).put(item.file);
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("Upload is " + progress + "% done");
+          },
+          (error) => {
+            console.log(error);
+          },
+          () => {
+            uploadTask.snapshot.ref.getDownloadURL().then(async(url) => {
+              try {
+                await axios.put(`/users/${currentUser._id}`,{profilePicture:url},config).then((response) => {
+                  setCurrentUser({...currentUser,profilePicture:url})
+                  setProfileModal(false)
+                  setProfilePic(false)
+                  setUploading(false)
+                  console.log("after update",currentUser);
+                  queryClient.invalidateQueries(["user"]);
+              }).catch((err)=>{
+                console.log(err,"hello");
+               err.response.data.error?setErr(err.response.data.error):setErr(err.response.data)
+                
+              })
+              } catch (error) {
+                setErr(error.response.data)
+                console.log(error,"hello");
+              }
+             
+              // axios.post('/posts',{desc:desc,img:url},config)
+              // queryClient.invalidateQueries(["posts"]);
+             
+              // setPost({desc:post,img:url})
+              // console.log(post); 
+            });
+          }
+        );
+      });
+    };
+  const handleProfile =(e)=>{
+    
+      e.preventDefault();
+      if (profilePic) {
+        setUploading(true)
+        upload([
+          { file: profilePic, label: "img" },
+        ]);
+      }else{
+        setErr("please choose an image")
+      }
+      
+  }
   return (
     <div className="profile">
       {isLoading ? (
@@ -180,6 +237,39 @@ const Profile = () => {
           <div className="images">
             <img src={data.coverPicture} alt="" className="cover" />
             <img src={data.profilePicture} alt="" className="profilePic" />
+            {currentUser?._id === data?._id && (
+                    <EditIcon
+                      onClick={() => setProfileModal(true)}
+                      className="z-0 absolute bottom-11 shadow bg-white rounded-full p-1 edit"
+                    />
+                  )}
+                  <Modal
+            isOpen={profileModal}
+            onAfterOpen={afterOpenModal}
+            onRequestClose={closeModal}
+            style={customStyles}
+            contentLabel="Example Modal"
+          >
+            <h2  style={{color:"blue",textAlign:"center"}}>Change profile picture</h2>
+            <CloseIcon onClick={closeModal} className="close" />
+            <input type="file" name="img" id="file" style={{display:"none"}} accept=".png, .jpeg, .jpg" onChange={e=>setProfilePic(e.target.files[0])}/>
+            <label htmlFor="file">
+              <div className="item" style={{textAlign:"center"}}> 
+                <img style={{
+                   width: "9rem",
+                   marginRight: "auto",
+                   marginLeft: "auto",
+                   marginTop: "1rem",
+                   borderRadius: "50%",
+                   height:"9rem"
+                }} src={profilePic? URL.createObjectURL(profilePic):currentUser.profilePicture} alt="" />
+                <span style={{paddingTop:"3px"}}>Add Image</span><br /> 
+                {err&&<span style={{color:"red",fontSize:".5rem",display:"block"}}>{err}</span>}
+              <Button variant="contained" style={{backgroundColor:"blue"}} className="sendButton" onClick={handleProfile}>{uploading?"uploading...":"Change"}</Button>
+
+                </div>
+              </label>
+          </Modal>
           </div>
           <div className="profileContainer">
             <div className="uInfo">
@@ -195,6 +285,7 @@ const Profile = () => {
                   </div>
 
                 </div>
+                
                 {/* <a href="http://facebook.com">
                   <FacebookTwoToneIcon fontSize="large" />
                 </a>
@@ -242,7 +333,9 @@ const Profile = () => {
                 </div>
               </div>
               <div className="right">
+              <Link to="/messages">
                 <EmailOutlinedIcon />
+                </Link>
                 <MoreVertIcon style={{ cursor: "pointer" }} onClick={()=>setMenuOpen(!menuOpen)}/>
                 {userId !== currentUser._id&&(menuOpen && <button onClick={openModal} style={{ backgroundColor: "orange" }}>Report</button>)}
                 <Modal
@@ -271,6 +364,7 @@ const Profile = () => {
               <Button variant="contained" endIcon={<SendIcon />} className="sendButton" onClick={handleReport}>Send</Button>
             </FormControl>
           </Modal>
+          
               </div>
             </div>
             <Posts userId={userId} key={userId} />

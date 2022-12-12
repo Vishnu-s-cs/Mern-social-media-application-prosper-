@@ -60,6 +60,10 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default:false,
     },
+    phone:{
+      type:Number,
+      unique:true
+    },
   },
   { timestamps: true }
 );

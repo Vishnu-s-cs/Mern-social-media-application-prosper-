@@ -71,7 +71,7 @@ exports.likeAndUnlike=async (req, res) => {
       }
       if (!post.likes.includes(req.user.id)) {
         await post.updateOne({ $push: { likes: req.user.id } });
-        if (post.userId != req.params.id) {
+        if (post.userId != req.user.id) {
           NotificationModel.create({
             userId: post.userId,
             emiterId: req.user.id,
@@ -140,6 +140,14 @@ exports.addComment=async (req, res) => {
       const post = await Post.findById(req.params.id);
       
         await post.updateOne({ $push: { comments: comment } });
+        if (post.userId != req.user.id) {
+          NotificationModel.create({
+            userId: post.userId,
+            emiterId: req.user.id,
+            text: 'commented your post.',
+            postId: req.body.postId
+          })
+        }
         res.status(200).json("commented successfully");
      
     } catch (err) {

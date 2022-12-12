@@ -6,7 +6,6 @@ export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("user"))||null);
   const token = localStorage.getItem('accessToken')||null;
   const [config, setConfig] = useState(false)
-  const [accessToken, setAccessToken] = useState("")
   // if (JSON.parse(localStorage.getItem("user")) !== undefined) {
   //   setCurrentUser(JSON.parse(localStorage.getItem("user")))
   // }
@@ -16,7 +15,7 @@ export const AuthContextProvider = ({ children }) => {
     await axios.post(`/auth/login`,details,{withCredentials: true}).then((res)=>{
     console.log(res);
     setCurrentUser(res.data.other)
-    setAccessToken(res.data.accessToken)
+    localStorage.setItem("accessToken",res.data.accessToken)
     setConfig({
       headers: { token: `Bearer ${res.data.accessToken}` },      
   })
@@ -29,7 +28,7 @@ export const AuthContextProvider = ({ children }) => {
     if (currentUser!=undefined) {
       
         localStorage.setItem("user", JSON.stringify(currentUser));
-        localStorage.setItem("accessToken", accessToken);
+        // localStorage.setItem("accessToken", accessToken);
 
         // console.log(cookies.get('accessToken'));
 
@@ -38,7 +37,7 @@ export const AuthContextProvider = ({ children }) => {
   }, [currentUser]);
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, setCurrentUser, token,config}}>
+    <AuthContext.Provider value={{ currentUser, login, setCurrentUser, token,config,setConfig}}>
       {children}
     </AuthContext.Provider>
   );

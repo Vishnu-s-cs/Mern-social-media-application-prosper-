@@ -13,7 +13,7 @@
   display: flex;
 }
 
-}
+
 
 
 
@@ -134,7 +134,10 @@
   }
 
   .chatOnline{
-    flex: 0px;
+    display: none;
+  }
+  .msgReq{
+    display: none;
   }
 }
 .messageImg {
@@ -147,4 +150,15 @@
 .receiver{
   position: absolute;
   padding-left: 48px;
+}
+}
+.msgReq{
+  text-align: end;
+    margin-right: 5rem;
+    position: absolute;
+    width: 79%;
+    margin-top: 1rem;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
 }

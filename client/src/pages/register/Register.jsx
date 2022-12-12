@@ -12,6 +12,7 @@ const Register = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    phone: ""
   });
   const {config} = useContext(AuthContext)
 const [error, setError] = useState(false);
@@ -36,9 +37,19 @@ const [error, setError] = useState(false);
       label: "Email",
       required: true,
     },
-   
     {
       id: 3,
+      name: "phone",
+      type: "text",
+      placeholder: "Phone no...",
+      errorMessage: "It should be a valid phone number",
+      label: "Phone no.",
+      pattern: `^[0-9]{10,10}$`,
+      required: true,
+    },
+   
+    {
+      id: 4,
       name: "password",
       type: "password",
       placeholder: "Password",
@@ -49,7 +60,7 @@ const [error, setError] = useState(false);
       required: true,
     },
     {
-      id: 4,
+      id: 5,
       name: "confirmPassword",
       type: "password",
       placeholder: "Confirm Password",
@@ -68,7 +79,8 @@ const [error, setError] = useState(false);
         console.log('signup success',response);
         navigate('/login')
     }).catch((err)=>{
-     err.response.data.error?setError(err.response.data.error):setError(err.response.data.msg)
+      console.log(err);
+     err.response.data.error?setError(err.response.data.error):setError(err.response.data)
       
     })
     } catch (error) {

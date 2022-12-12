@@ -53,6 +53,7 @@ export default function ChatOnline({ onlineUsers, currentId, setCurrentChat,setR
   return (
     <div className="chatOnline">
       <input value="Online" className="chatMenuInput" disabled/>
+      {onlineFriends.length===0&&"No one online"}
       {onlineFriends.map((o) => (
         <div className="chatOnlineFriend" onClick={() => handleClick(o)} key={o._id}>
           <div className="chatOnlineImgContainer">

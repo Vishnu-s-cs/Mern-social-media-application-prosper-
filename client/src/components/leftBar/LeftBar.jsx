@@ -7,15 +7,19 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import { AuthContext } from "../../context/authContext";
 import { DarkModeContext } from "../../context/darkModeContext";
-import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
 import Cookies from 'universal-cookie';
-
+import { useQuery } from '@tanstack/react-query';
+import axios from "../../axios"
 const LeftBar = () => {
  
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser,setCurrentUser } = useContext(AuthContext);
+  const navigate = useNavigate()
   const { toggle, darkMode } = useContext(DarkModeContext);
+  const [count, setCount] = useState(0)
+  const [notifications, setNotifications] = useState([])
   const cookies = new Cookies();
 
   const handleLogout = () => {
@@ -33,10 +37,10 @@ const LeftBar = () => {
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("user");
-    
-        window.location.replace('/login');
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    setCurrentUser(false)
+    navigate('/login')
       } else if (result.isDenied) {
         
       }
@@ -44,7 +48,18 @@ const LeftBar = () => {
     
   
   };
-  
+  const { isLoading, error, data } = useQuery(["notifications"], () => 
+    axios.get(`/notifications/${currentUser._id}`)
+      .then(({ data }) => {
+        setNotifications(data)
+        return data;
+      }).catch((error) => console.log(error))
+ 
+  );
+  useEffect(() => {
+    notifications &&
+      setCount(notifications.filter(e => e.isVisited === false).length)
+  }, [notifications])
   return (
     <div className="leftBar">
           <Link to="/" style={{ textDecoration: "none"}}>
@@ -69,13 +84,13 @@ const LeftBar = () => {
           </Link>
           <Link to='/notifications' style={{ textDecoration: "none",padding:"0",margin:"0" }}>
           <div className="item">
-            <NotificationsOutlinedIcon/>
+            <NotificationsOutlinedIcon/>{count > 0 && <span className='absolute px-1 py-0.3 bg-red-600 text-white rounded-full text-xs mt-2.5 ml-3.5'> {count}</span>}
             <span>Notifications</span>
           </div>
           </Link>
         <Link to={'/profile/'+currentUser._id} style={{ textDecoration: "none",padding:"0",margin:"0" }}>
 
-          <div className="user">
+          <div className="item">
             <img
               src={currentUser.profilePicture}
               alt=""
