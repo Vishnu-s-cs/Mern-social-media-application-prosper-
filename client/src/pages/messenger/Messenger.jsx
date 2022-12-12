@@ -91,7 +91,7 @@ export default function Messenger() {
 
   useEffect(() => {
     const getConversations = async () => {
-      try {
+      try { 
         const res = await axios.get("/conversations/" + currentUser._id);
         console.log('convs',res.data);
         // setMessageReq(res.data)
@@ -100,8 +100,19 @@ export default function Messenger() {
           // console.log(e.members.find((m) => m !== currentUser._id));
           var sender=e.members.find((m) => m !== currentUser._id)
           if(!currentUser.followings.includes(sender)){
-            setMessageReq([...messageReq,e])
-            console.log(e,"hi");
+           if(messageReq.length>0){
+           messageReq.map(r=>{
+            console.log(!r?._id===e._id);
+            if(!r._id===e._id){
+              setMessageReq([...messageReq,e])
+            }
+           })}else{
+            setMessageReq([...messageReq,e])         
+           }
+              
+
+           
+            console.log(e,"hi"); 
           }
           
         })
@@ -231,6 +242,10 @@ export default function Messenger() {
       </QueryClientProvider>
           <div style={{ flex: 8 }}>
         <div className="msgReq" onClick={openModal}>Message requests</div>
+        {messageReq.length > 0 && <div className='absolute px-1 py-0.3 bg-red-600 text-white rounded-full text-xs mt-2.5 ml-3.5' style={{
+              right: "61px",
+              top: "61px"
+        }}> {messageReq.length}</div>}
         <Modal
             isOpen={modalIsOpen}
             onAfterOpen={afterOpenModal}
