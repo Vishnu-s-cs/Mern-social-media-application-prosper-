@@ -60,7 +60,7 @@ export default function Messenger() {
     setIsOpen(false);
   }
   useEffect(() => {
-    socket.current = io("ws://localhost:8900/");
+    socket.current = io("https://socket.prosper-media.cf/");
     socket.current.on("getMessage", (data) => {
       setArrivalMessage({
         sender: data.senderId,
