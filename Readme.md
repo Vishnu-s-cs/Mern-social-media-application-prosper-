@@ -29,17 +29,21 @@
 * Google cloud services: Admin side
 
 ## Images
-* Home
-![alt text](https://github.com/Vishnu-s-cs/Beta.com/blob/831aee3126732f34b10fc6891872f20236dbc13d/Screenshot%202022-12-23%20205216.png)
-* Product page
-![alt text](https://github.com/Vishnu-s-cs/Beta.com/blob/831aee3126732f34b10fc6891872f20236dbc13d/WhatsApp%20Image%202022-12-23%20at%208.44.24%20PM.jpeg)
-![alt text](https://github.com/Vishnu-s-cs/Beta.com/blob/831aee3126732f34b10fc6891872f20236dbc13d/WhatsApp%20Image%202022-12-23%20at%208.43.57%20PM.jpeg)
-* Payment gateways
-![alt text](https://github.com/Vishnu-s-cs/Beta.com/blob/c6140c03c9634033bc940c89f8159773e13ef621/Razorpay.png)
-![alt text](https://github.com/Vishnu-s-cs/Beta.com/blob/a4c8fc4ed88b794f59dcb664693a6059a0a24fb5/Screenshot_20221226_000356.png)
+* Login
+![alt text](https://github.com/Vishnu-s-cs/Mern-social-media-application-prosper-/blob/a355e5727fbbbb340bbc0455d98b90ebc2f9e58d/prosper%20sc/Login.png)
+* Home page
+![alt text](https://github.com/Vishnu-s-cs/Mern-social-media-application-prosper-/blob/a355e5727fbbbb340bbc0455d98b90ebc2f9e58d/prosper%20sc/Home%20page.png)
+* Notifications
+![alt text](https://github.com/Vishnu-s-cs/Mern-social-media-application-prosper-/blob/a355e5727fbbbb340bbc0455d98b90ebc2f9e58d/prosper%20sc/Notifications.png)
+* Messages
+![alt text](https://github.com/Vishnu-s-cs/Mern-social-media-application-prosper-/blob/a355e5727fbbbb340bbc0455d98b90ebc2f9e58d/prosper%20sc/Messages.png)
+* Profile
+![alt text](https://github.com/Vishnu-s-cs/Mern-social-media-application-prosper-/blob/a355e5727fbbbb340bbc0455d98b90ebc2f9e58d/prosper%20sc/Profile.png)
 * Admin panel
-![alt text](https://github.com/Vishnu-s-cs/Beta.com/blob/0bc556f5e10cf75c9840f15e50923ea4c8aa15c8/Screenshot_20221226_000836.png)
-![alt text](https://github.com/Vishnu-s-cs/Beta.com/blob/0bc556f5e10cf75c9840f15e50923ea4c8aa15c8/Screenshot_20221223_204237.png)
+![alt text](https://github.com/Vishnu-s-cs/Mern-social-media-application-prosper-/blob/a355e5727fbbbb340bbc0455d98b90ebc2f9e58d/prosper%20sc/Admin%20dashboard.png)
+![alt text](https://github.com/Vishnu-s-cs/Mern-social-media-application-prosper-/blob/a355e5727fbbbb340bbc0455d98b90ebc2f9e58d/prosper%20sc/users.png)
+![alt text](https://github.com/Vishnu-s-cs/Mern-social-media-application-prosper-/blob/a355e5727fbbbb340bbc0455d98b90ebc2f9e58d/prosper%20sc/posts.png)
+![alt text](https://github.com/Vishnu-s-cs/Mern-social-media-application-prosper-/blob/a355e5727fbbbb340bbc0455d98b90ebc2f9e58d/prosper%20sc/report.png)
 ## Future Updations:
 
 * Calling feature
