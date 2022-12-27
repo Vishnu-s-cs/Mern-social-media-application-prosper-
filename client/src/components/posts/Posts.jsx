@@ -5,12 +5,14 @@ import  axios  from "../../axios";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
+import { SocketContext } from "../../context/socketContext";
 
 const Posts = ({userId}) => {
   const navigate = useNavigate()
   const [err, setErr] = useState(false)
-  const {config,setCurrentUser} = useContext(AuthContext)
-     
+  const {config,setCurrentUser,currentUser} = useContext(AuthContext)
+  const socket = useContext(SocketContext)
+  socket.emit("addUser", currentUser._id);
 
   const { isLoading, error, data } = useQuery(["posts"], () =>
   axios.get(userId ?  `posts/profile/${userId}` : "posts/timeline/all",config).then((res) => {

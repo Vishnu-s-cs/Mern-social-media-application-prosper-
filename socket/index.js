@@ -44,6 +44,26 @@ io.on("connection", (socket) => {
     }
     
   });
+  //notifications
+
+  socket.on("sendNotification", ({ senderId, type,userId }) => {
+    console.log("emitted",userId);
+    const receiver = getUser(userId);
+    console.log(userId,receiver);
+    socket.to(receiver?.socketId).emit("getNotification", {
+      emiterId:senderId,
+      text:type,
+      createdAt:Date.now()
+    });
+  });
+
+  socket.on("sendText", ({ senderName, receiverName, text }) => {
+    const receiver = getUser(receiverName);
+    io.to(receiver?.socketId).emit("getText", {
+      senderName,
+      text,
+    });
+  });
 
   //when disconnect
   socket.on("disconnect", () => {

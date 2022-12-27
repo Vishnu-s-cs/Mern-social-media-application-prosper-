@@ -36,10 +36,17 @@ function RightBar() {
 );
 
 
-  const follow =(userId)=>{
-    axios.put(`users/${userId}/follow`,{ userId :currentUser._id},config)
+  const follow =async(userId)=>{
+    await axios.put(`users/${userId}/follow`,{ userId :currentUser._id},config)
     setCurrentUser(prev=>{prev.followings.push(userId);let followings=prev.followings;console.log(followings,userId); return  {...currentUser,followings};}) 
-    console.log(userId);
+    await axios.get(
+      `/conversations/find/${currentUser._id}/${userId}`,config
+    ).then(async(response)=>{
+      if (response.data==null) {
+        await axios.post(
+          `/conversations/`,{senderId:currentUser._id,receiverId:userId},config)
+        }
+        })
     queryClient.invalidateQueries(["user"]);
     queryClient.invalidateQueries(["suggestions"]);
     queryClient.invalidateQueries(["posts"]);

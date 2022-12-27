@@ -21,6 +21,7 @@ import FormLabel from '@mui/material/FormLabel';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
+import { SocketContext } from "../../context/socketContext";
 
 const customStyles = {
   content: {
@@ -44,6 +45,15 @@ const Post = ({ post }) => {
   const [report, setReport] = useState('other')
   const queryClient = useQueryClient();
   const [err, setErr] = useState(null)
+  const socket = useContext(SocketContext);
+  console.log(socket,"frm post");
+  const handleNotification = (type) => {
+    socket?.emit("sendNotification", {
+      senderId: currentUser._id,
+      type,
+      userId:user._id
+    });
+  };
   let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);
 
@@ -82,12 +92,14 @@ const Post = ({ post }) => {
   //TEMPORARY
   // const liked = true;
   const handleLike = () => {
+
     const accessToken = localStorage.getItem('accessToken')
     axios.put(`posts/${post._id}/like`,{},{headers: {
       'token': `Bearer ${accessToken}`,
       'Content-Type': 'application/x-www-form-urlencoded'
   }
 }).then(() => {
+      !liked&&handleNotification("liked your post")
       setLiked(!liked)
       queryClient.invalidateQueries(["posts"]);
     }).catch((err)=>{

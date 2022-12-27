@@ -4,11 +4,20 @@ import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../../axios";
 import ReactTimeAgo from "react-time-ago";
+import { SocketContext } from "../../context/socketContext";
 
 const Comments = ({ post }) => {
   const [desc, setDesc] = useState("");
   const { currentUser, token } = useContext(AuthContext);
+  const socket = useContext(SocketContext)
   const queryClient = useQueryClient();
+  const handleNotification = (type) => {
+    socket?.emit("sendNotification", {
+      senderId: currentUser._id,
+      type,
+      userId:post.userId
+    });
+  };
   const sortedComments = post.comments.sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
@@ -25,6 +34,7 @@ const Comments = ({ post }) => {
     {
       onSuccess: () => {
         // Invalidate and refetch
+        handleNotification("commented on your post")
         queryClient.invalidateQueries(["posts"]);
       },
     }

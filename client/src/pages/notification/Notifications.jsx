@@ -5,24 +5,36 @@ import Notification from '../../components/Notification'
 import axios from '../../axios'
 // import NavBar from '../navBar/NavBar'
 import { DarkModeContext } from '../../context/darkModeContext'
+import { SocketContext } from '../../context/socketContext'
 
 
 function Notifications() {
     const {  currentUser } = useContext(AuthContext)
+    const socket = useContext(SocketContext)
     const [notifications, setNotifications] = useState([])
     const {darkMode} = useContext(DarkModeContext)
-
+    useEffect(() => {
+       
+        socket?.on("getNotification", (data) => {
+          setNotifications((prev) => [data,...prev]);
+        });
+      }, []);
     const queryClient = useQueryClient()
 
     const getNotifications = () => {
         axios.get(`/notifications/${currentUser._id}`)
             .then((response) => {
-                console.log(response);
-                const sortedData = response.data.sort(function (a, b) {
-                    return new Date(b.createdAt) - new Date(a.createdAt);
-                });
-                setNotifications(sortedData)
-                return sortedData;
+                if (response.data.length>1) {
+                    const sortedData = response.data.sort(function (a, b) {
+                        return new Date(b.createdAt) - new Date(a.createdAt);
+                    });
+                    setNotifications(sortedData)
+                }
+                else{
+                    setNotifications(response.data)
+                }
+                
+                return response.data;
             }).catch((error) => console.log(error))
     }
 

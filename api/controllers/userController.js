@@ -154,21 +154,113 @@ exports.deleteUser=async (req, res) => {
 
 exports.getFriends=async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
-    const friends = await Promise.all(
-      user.followings.map((friendId) => {
-        return User.findById(friendId);
-      })
-    );
-    let friendList = [];
-    friends.map((friend) => {
-      if (friend!=null) {
-        const { _id, username, profilePicture } = friend;
-        friendList.push({ _id, username, profilePicture });
-      }
+    // const user = await User.findById(req.params.userId);
+    // const friends = await Promise.all(
+    //   user.followings.map((friendId) => {
+    //     return User.findById(friendId);
+    //   })
+    // );
+    // let friendList = [];
+    // friends.map((friend) => {
+    //   if (friend!=null) {
+    //     const { _id, username, profilePicture } = friend;
+    //     friendList.push({ _id, username, profilePicture });
+    //   }
      
-    });
+    // });
+//     const user = await User.aggregate([
+//   {
+//     $match: {
+//       _id: req.params.userId
+//     }
+//   },
+//   {
+//     $lookup: {
+//       from: "users",
+//       localField: "followings",
+//       foreignField: "_id",
+//       as: "friends"
+//     }
+//   },
+//   {
+//     $match: {
+//       friends: { $ne: null }
+//     }
+//   },
+//   {
+//     $project: {
+//       friendList: {
+//         $map: {
+//           input: "$friends",
+//           as: "friend",
+//           in: {
+//             _id: "$$friend._id",
+//             username: "$$friend.username",
+//             profilePicture: "$$friend.profilePicture"
+//           }
+//         }
+//       }
+//     }
+//   }
+// ]);
+// const user = await User.findById(req.params.userId);
+// const friendList = await User.aggregate([
+//   {
+//     $match: {
+//       _id: { $in: user.followings}
+//     }
+//   },
+//   {
+//     $project: {
+//       _id: 1,
+//       username: 1,
+//       profilePicture: 1
+//     }
+//   }
+// ]);
+
+// res.json(friendList);
+// const user = await User.findById(req.params.userId);
+// const friendList = await User.aggregate([
+//   {
+//     $match: {
+//       _id: { $in: user.followings }
+//     }
+//   },
+//   {
+//     $lookup: {
+//       from: "users",
+//       localField: "_id",
+//       foreignField: "followings",
+//       as: "friends"
+//     }
+//   },
+//   {
+//     $project: {
+//       friends: {
+//         $map: {
+//           input: "$friends",
+//           as: "friend",
+//           in: {
+//             _id: "$$friend._id",
+//             username: "$$friend.username",
+//             profilePicture: "$$friend.profilePicture"
+//           }
+//         }
+//       }
+//     }
+//   }
+// ]);
+// res.status(200).json(friendList)
+
+    const user = await User.findById(req.params.userId).populate("followings");
+const friendList = user.followings.map((friend) => {
+  const { _id, username, profilePicture } = friend;
+  return { _id, username, profilePicture };
+});
+
     res.status(200).json(friendList)
+
   } catch (err) {
     res.status(500).json(err);
     console.log(err);

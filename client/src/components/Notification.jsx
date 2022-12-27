@@ -5,13 +5,12 @@ import axios from '../axios';
 
 
 function Notification({ notification }) {
-    console.log(notification);
+
     const {emiterId, text, createdAt }= notification
     const [user, setUser] = useState({})
 
     useEffect(() => {
         axios.get(`/users/${emiterId}`).then(({ data }) => {
-            console.log(data);
             setUser(data)
         }).catch((error) => {
             console.log(error);
