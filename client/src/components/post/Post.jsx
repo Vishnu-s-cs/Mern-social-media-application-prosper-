@@ -206,12 +206,12 @@ const Post = ({ post }) => {
           }} style={{ cursor: "pointer" }} />
           {post.userId === currentUser._id ? menuOpen && post.userId === currentUser._id && (
             <>
-              <button onClick={handleDelete}>Delete</button>
-              <button onClick={handleUpdate} style={{ top: "4rem", backgroundColor: "blue" }}>Update</button>
+              <button onClick={handleDelete} style={{width: "6rem",border: "1px solid",background:"white",color:"black"}}>Delete</button>
+              <button onClick={handleUpdate} style={{ top: "4rem", width: "6rem",border: "1px solid",background:"white",color:"black"}}>Update</button>
             </>
           ) : menuOpen && <button onClick={openModal} style={{ backgroundColor: "orange" }}>Report</button>
           }
-          {updateOpen && (<><input type="text" placeholder="update description" onChange={(e) => setDesc(e.target.value)} onKeyDown={handleKeyDown} /></>)}
+          {updateOpen && (<><input type="text" placeholder="update description" onChange={(e) => setDesc(e.target.value)} onKeyDown={handleKeyDown} style={{marginRight:"3rem"}}/></>)}
           <Modal
             isOpen={modalIsOpen}
             onAfterOpen={afterOpenModal}

@@ -44,11 +44,14 @@ const Share = () => {
           uploadTask.snapshot.ref.getDownloadURL().then(async(url) => {
            
            
-            axios.post('/posts',{desc:desc,img:url},config)
+            axios.post('/posts',{desc:desc,img:url},config).then(()=>{
+
             queryClient.invalidateQueries(["posts"]);
             setDesc("")
             setImg(null)
             setUploading(false)
+            })
+            
             // setPost({desc:post,img:url})
             // console.log(post); 
           });
@@ -64,8 +67,9 @@ const Share = () => {
   const handleUpload = (e) => {
     if (desc?.trim().length!==0&&desc!=null) { 
       if (img==null) {
-        axios.post('/posts',{desc:desc},config)
-              queryClient.invalidateQueries(["posts"]);
+        axios.post('/posts',{desc:desc},config).then(()=>{
+          queryClient.invalidateQueries(["posts"]);
+        })
               setDesc("")
       }
       else
