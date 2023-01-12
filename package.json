@@ -5,6 +5,7 @@
   "main": "index.js",
   
     "scripts": {
+      "git" : "git add . && git commit -m 'minor update' && git push prosper2 master ",
       "socket": "start cmd /k nodemon ./socket",
       "server": "start cmd /k nodemon api",
       "client": "cd client && npm start",
