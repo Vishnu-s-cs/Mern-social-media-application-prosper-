@@ -1,0 +1,18 @@
+{
+  "name": "prosper",
+  "version": "1.0.0",
+  "description": "[Link to the live application](https://www.prosper-media.cf/)\r ## Features:\r * User & Admin Authentication\r * Post related social media things:create,delete,update,report,comment,like\r * User follow,unfollow,report\r * User profile\r * Chart & Graph reports on Admin side\r * Form Validation\r * Post & users Management in Admin side\r * Accept/reject report in admin side\r * Twilio OTP login\r * Notification\r * Chat feature",
+  "main": "index.js",
+  
+    "scripts": {
+      "socket": "start cmd /k nodemon ./socket",
+      "server": "start cmd /k nodemon api",
+      "client": "cd client && npm start",
+        "start": "npm run socket && npm run server && npm run client"
+      }
+,
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+

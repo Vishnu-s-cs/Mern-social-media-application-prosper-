@@ -40,7 +40,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar bg-slate-100">
+    <div className="navbar">
       <div className="left">
         {/* <Link to="/" style={{ textDecoration: "none" }}>
           <span className="icon">prosper</span>

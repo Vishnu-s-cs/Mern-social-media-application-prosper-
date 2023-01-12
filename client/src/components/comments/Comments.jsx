@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../../axios";
 import ReactTimeAgo from "react-time-ago";
 import { SocketContext } from "../../context/socketContext";
-
+import Swal from "sweetalert2";
 const Comments = ({ post }) => {
   const [desc, setDesc] = useState("");
   const { currentUser, token } = useContext(AuthContext);
@@ -44,6 +44,7 @@ const Comments = ({ post }) => {
       handleClick(event);
     }
   };
+  
   const handleClick = async (e) => {
     e.preventDefault();
     const newComment = {
@@ -54,7 +55,26 @@ const Comments = ({ post }) => {
     mutation.mutate(newComment);
     setDesc("");
   };
+  const handleDelete = (commentId) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.put(`posts/${post._id}/unComment?comment=${commentId}`).then((res)=>{
+          // console.log(res,"ne shuper aada");
+          queryClient.invalidateQueries(["posts"]);
+        }).catch((err)=>{console.log(err);})
+      // posts/6360aefa494f2c1db4badd44/unComment?comment=63635b4e4ae1fe3cb0012ba3
+      }
+    })
 
+  };
   return (
     <div className="comments">
       <div className="write">
@@ -80,6 +100,11 @@ const Comments = ({ post }) => {
               <span>{comment.name}</span>
               <p>{comment.comment}</p>
             </div>
+            {
+              post.userId === currentUser._id&&
+              <p onClick={()=>{handleDelete(comment._id)}}>delete</p>
+
+            }
           </div>
 
           <span className="date">

@@ -5,3 +5,4 @@
 ./api/node_modules
 ./api/.env
 ./client/build
+.env

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./login.scss";
 import FormInput from "../../components/formInput/FormInput";
 import {Link, useNavigate} from 'react-router-dom'
@@ -20,6 +20,13 @@ const customStyles = {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
+    minWidth:"28rem",
+    display:"flex",
+    flexDirection: "column",
+    backgroundColor: "white",
+    padding:"30px"
+
+
   },
 };
 
@@ -28,10 +35,31 @@ const Login = () => {
   // const cookies = new Cookies();
   // const navigate = useNavigate()
   const [err, setErr] = useState(false);
-  const [otp, setOtp] = useState(false);
-  const [phone, setPhone] = useState(false)
+  const [otp, setOtp] = useState("");
+  const [phone, setPhone] = useState("")
   const [status, setStatus] = useState(false)
   const [number, setNumber] = useState(false)
+  const [counter,setCounter] = useState("0m:10s")
+const [resetCounter,setResetCounter] = useState(false)
+  const [otpsended, setOtpsended] = useState(true)
+
+  useEffect(()=>{
+    let timer = 10; 
+    let minute,second;
+        let counterInterval = setInterval(()=>{
+            if(timer <= 0 ) { 
+                setCounter("")
+    
+                return clearInterval(counterInterval)
+            }
+            timer = timer - 1;
+            minute = Math.floor(timer / 60) 
+            second = timer % 60;
+            setCounter(`${minute}m : ${second}s`)
+        },1000)
+    },[resetCounter])
+
+
   const [values, setValues] = useState({
     email: "",
     password: "",
@@ -96,10 +124,14 @@ const Login = () => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
   const handleOTP = (e)=>{
+    
    e.preventDefault()
+  
    if (phone.trim().length===10) {
    setStatus("please wait...")
     axios.post('auth/sendotp',{phno:phone}).then(()=>{
+       setOtpsended(false)
+       setResetCounter(prev => !prev)
       setNumber(phone)
       setStatus("otp sent successfully")
     }).catch((err)=>{
@@ -127,6 +159,8 @@ const Login = () => {
     }).catch((err)=>{
      console.log(err);
       setErr(err.response.data.err)
+      setStatus(" ")
+
     })
    }else{
     setErr("something went wrong please try again")
@@ -163,12 +197,13 @@ const Login = () => {
            
           </div>
       </form>
-      <Modal
+            <Modal
             isOpen={modalIsOpen}
             onAfterOpen={afterOpenModal}
             onRequestClose={closeModal}
             style={customStyles}
             contentLabel="Example Modal"
+            
           >
             <h2 ref={(_subtitle) => (subtitle = _subtitle)}>OTP</h2>
             <CloseIcon onClick={closeModal} className="close" />
@@ -177,15 +212,28 @@ const Login = () => {
             <FormControl>
             {err&&<span style={{ top: "2rem", color: "red" }} className="err">{err}</span>}
             {status&&<span style={{ top: "2rem", color: "green" }} >{status}</span>}
-              <TextField id="standard-basic" label="Enter your phone no." variant="standard" onChange={e=>{setPhone(e.target.value);setErr(false)}}/>
-              <Button variant="contained" endIcon={<SendIcon />} className="sendButton" onClick={handleOTP}>Send</Button>
-              <TextField id="standard-basic" label="Enter OTP" variant="standard" onChange={e=>setOtp(e.target.value)}/>
-              {/* {err&&<span style={{ top: "2rem", color: "red" }} className="err">{err}</span>} */}
-              <Grid container>
+            {
+              otpsended ? <>
+              <TextField id="standard-basic" label="Enter your phone no." type="number" variant="standard" onChange={e=>{setPhone(e.target.value);setErr(false)}}/>
+              <Button variant="contained" endIcon={<SendIcon />} className="sendButton"  style={{alignSelf:"flex-end"}} onClick={handleOTP}>Send</Button>
+              </>
 
-              <Button variant="contained"  className="sendButton" onClick={verifyOTP} style={{backgroundColor:"blue" ,display:"inline"}}>Login</Button>&nbsp;&nbsp;
-              <Button variant="contained" endIcon={<SendIcon />} className="sendButton" onClick={handleOTP}>Resend</Button>
+              :<>
+              <TextField id="standard-basic" label="Enter OTP" value={otp} variant="standard" onChange={e=>setOtp(e.target.value)}/>
+              {/* {err&&<span style={{ top: "2rem", color: "red" }} className="err">{err}</span>} */}
+              <div
+               style={{visibility:counter ?"":"hidden"}}
+               >{counter&&"Resend otp in "}{counter||"no timer"}</div>
+              <Grid container className="otpbuttons" >
+
+             <Button variant="contained" endIcon={<SendIcon />} className="sendButton" onClick={handleOTP} disabled={counter}>Resend</Button>&nbsp;&nbsp;
+              <Button variant="contained"  className="sendButton" onClick={verifyOTP} style={{backgroundColor:"blue" ,display:"inline"}}>Login</Button>
               </Grid>
+              </>
+
+            }
+              
+              
             </FormControl>
           </Modal>
     </div>

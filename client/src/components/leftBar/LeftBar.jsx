@@ -13,15 +13,32 @@ import Swal from 'sweetalert2'
 import Cookies from 'universal-cookie';
 import { useQuery } from '@tanstack/react-query';
 import axios from "../../axios"
+import { SocketContext } from "../../context/socketContext";
+
 const LeftBar = () => {
  
   const { currentUser,setCurrentUser } = useContext(AuthContext);
   const navigate = useNavigate()
   const { toggle, darkMode } = useContext(DarkModeContext);
   const [count, setCount] = useState(0)
+  const [messageCount, setMessageCount] = useState(0)
   const [notifications, setNotifications] = useState([])
   const cookies = new Cookies();
-
+  const socket = useContext(SocketContext)
+            
+              useEffect(() => {
+                // socket.current = io("https://socket.prosper-media.cf/");
+                socket.on("getMessage", (data) => {
+                  setMessageCount(prev => prev +1)
+                  // alert('hei')
+                  // setArrivalMessage({
+                  //   sender: data.senderId,
+                  //   text: data.text,
+                  //   createdAt: Date.now(),
+                  // });
+                });
+              }, []);
+            
   const handleLogout = () => {
     Swal.fire({
       title: 'Do you want to logout?',
@@ -78,6 +95,7 @@ const LeftBar = () => {
           </Link>
           <Link to='/messages' style={{ textDecoration: "none",padding:"0",margin:"0" }}>
           <div className="item">
+            {messageCount > 0 && <span className='absolute px-1 py-0.3 bg-red-600 text-white rounded-full text-xs mt-2.5 ml-3.5'> {messageCount}</span>}
             <EmailOutlinedIcon/>
             <span>Messages</span>
           </div>

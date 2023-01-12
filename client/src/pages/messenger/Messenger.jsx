@@ -62,6 +62,7 @@ export default function Messenger() {
   useEffect(() => {
     // socket.current = io("https://socket.prosper-media.cf/");
     socket.on("getMessage", (data) => {
+      // alert('hei')
       setArrivalMessage({
         sender: data.senderId,
         text: data.text,

@@ -277,11 +277,18 @@ const Profile = () => {
       setErr("please choose an image");
     }
   };
+  
   return (
     <div className="profile">
       {isLoading ? (
         "loading"
-      ) : (
+      ) : 
+      error ? <>
+      <p style={{backgroundColor:"red"}}>User not found</p>
+      </>
+      : 
+      (
+
         <>
           <div className="images">
             <img src={data.coverPicture} alt="" className="cover" />
