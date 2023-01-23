@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./comments.scss";
 import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -6,8 +6,10 @@ import axios from "../../axios";
 import ReactTimeAgo from "react-time-ago";
 import { SocketContext } from "../../context/socketContext";
 import Swal from "sweetalert2";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 const Comments = ({ post }) => {
   const [desc, setDesc] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   const { currentUser, token } = useContext(AuthContext);
   const socket = useContext(SocketContext)
   const queryClient = useQueryClient();
@@ -18,15 +20,16 @@ const Comments = ({ post }) => {
       userId:post.userId
     });
   };
+
   const sortedComments = post.comments.sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
-  const config = {
-    headers: {
-      token: `Bearer ${token}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-  };
+  // const config = {
+  //   headers: {
+  //     token: `Bearer ${token}`,
+  //     "Content-Type": "application/x-www-form-urlencoded",
+  //   },
+  // };
   const mutation = useMutation(
     (newComment) => {
       return axios.put(`/posts/${post._id}/comment`, newComment);
@@ -75,6 +78,14 @@ const Comments = ({ post }) => {
     })
 
   };
+  useEffect(() => {
+    
+  
+    return () => {
+      setMenuOpen(false)
+    }
+  }, [])
+  
   return (
     <div className="comments">
       <div className="write">
@@ -98,13 +109,27 @@ const Comments = ({ post }) => {
             </div>
             <div className="info">
               <span>{comment.name}</span>
-              <p>{comment.comment}</p>
-            </div>
-            {
-              post.userId === currentUser._id&&
-              <p onClick={()=>{handleDelete(comment._id)}}>delete</p>
+             
+              { 
+              comment.user === currentUser._id&&
+             
+              <MoreHorizIcon onClick={() => {
+                setMenuOpen(!menuOpen)
+              }} style={{ cursor: "pointer",
+              alignSelf: "end",
+              position: "absolute" }} />
 
+            }{
+              menuOpen&&
+              <button onClick={()=>{handleDelete(comment._id)}} style={{width: "6rem",border: "1px solid",alignSelf: "end",background:"white",color:"black"}}>Delete</button>
             }
+              <p>{comment.comment}</p>
+            
+            </div>
+           
+
+           
+            
           </div>
 
           <span className="date">

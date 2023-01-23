@@ -61,8 +61,6 @@ exports.deletePost=async (req, res) => {
 
 exports.likeAndUnlike=async (req, res) => {
     try {
-      console.log(req.body.postId);
-      console.log("Reached here");
       var isPostFound=true
       const post = await Post.findById(req.params.id);
       if (!post) {
@@ -136,7 +134,8 @@ exports.timeline=async (req, res) => {
 
 exports.addComment=async (req, res) => {
     try {
-      const comment =req.body
+      const comment = req.body
+      comment.user = req.user.id
       const post = await Post.findById(req.params.id);
       
         await post.updateOne({ $push: { comments: comment } });

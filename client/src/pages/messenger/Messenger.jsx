@@ -99,7 +99,7 @@ export default function Messenger() {
   }, [arrivalMessage]);
   useEffect(()=>{
     const friendId = currentChat?.members.find((m)=> m !== currentUser._id);
-    console.log(friendId);
+  
 
     if(friendId){
     const getUser = async () =>{
@@ -128,7 +128,8 @@ export default function Messenger() {
     const getConversations = async () => {
       try {
         const res = await axios.get("/conversations/" + currentUser._id);
-        setConversations(res.data);
+        const sortedConversations = res.data.length>2?res.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)):res.data;
+        setConversations(sortedConversations);
       } catch (err) {
         console.log(err);
       }

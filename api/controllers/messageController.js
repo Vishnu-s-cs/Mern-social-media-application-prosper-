@@ -17,10 +17,11 @@ exports.newConversation=async (req, res) => {
 
 exports.addMessage=async (req, res) => {
     const newMessage = new Message(req.body);
-    const conversation = Conversation.findById()
+    const conversation = Conversation.findById(req.body.conversationId)
+    console.log(req.body.conversationId);
     try {
       const savedMessage = await newMessage.save();
-
+      conversation.updateOne({$inc:{lastMsg:1}}).then(res=>console.log(res))
       if(req.body.sendNot){
       NotificationModel.create({
             userId: req.body.receiverId,

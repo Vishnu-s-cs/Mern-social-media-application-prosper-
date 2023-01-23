@@ -6,7 +6,8 @@ const ConversationSchema = new mongoose.Schema(
       type: Array,
     },
     lastMsg:{
-      type: Number
+      type: Number,
+      default: 1
     }
   },
   { timestamps: true }
