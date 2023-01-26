@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/static/css/main.4d62494e.css",
-    "main.js": "/static/js/main.112d3bcf.js",
+    "main.js": "/static/js/main.09545ec3.js",
     "static/media/404 Error Page not Found with people connecting a plug-amico.png": "/static/media/404 Error Page not Found with people connecting a plug-amico.ec424d66e0ec00789a25.png",
     "index.html": "/index.html",
     "main.4d62494e.css.map": "/static/css/main.4d62494e.css.map",
-    "main.112d3bcf.js.map": "/static/js/main.112d3bcf.js.map"
+    "main.09545ec3.js.map": "/static/js/main.09545ec3.js.map"
   },
   "entrypoints": [
     "static/css/main.4d62494e.css",
-    "static/js/main.112d3bcf.js"
+    "static/js/main.09545ec3.js"
   ]
 }
